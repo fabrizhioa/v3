@@ -200,7 +200,7 @@ enum AlertTimeframe {
 
 model Alerta {
   id                String          @id @default(uuid())
-  id_creador        String
+  id_creador        String          @db.Uuid
   mercado           String
   tipo              String // Assuming AlertType is a string, adjust if needed
   precio            String
