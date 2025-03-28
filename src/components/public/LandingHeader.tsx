@@ -1,13 +1,13 @@
 "use client";
 import {
-  HomeIcon,
-  ShoppingCartIcon,
+  // HomeIcon,
+  // ShoppingCartIcon,
   UserIcon,
   UserPlusIcon,
 } from "lucide-react";
 import Link from "next/link";
 import LogoIcon from "../../assets/LogoIcon";
-import NavLink from "./LandingNavLink";
+// import NavLink from "./LandingNavLink";
 
 export default function LandingHeader() {
   return (

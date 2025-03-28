@@ -11,7 +11,7 @@ export async function getLandingData() {
     },
   });
   // Last three alerts
-  const alerts = await prisma.ale
+  // const alerts = await prisma.ale
   // Last three LiveClasses
   // Last three news
   return {courses: courses ?? []};

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LoginForm } from "@/app/components/auth/login-form";
+// import { LoginForm } from "@/app/components/auth/login-form";
 
 export const metadata = {
   title: "Iniciar sesión | Minds Over Market",
@@ -47,9 +47,7 @@ export default function LoginPage() {
               Ingresa tus credenciales para acceder a tu cuenta
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <LoginForm />
-          </CardContent>
+          <CardContent>{/* <LoginForm /> */}</CardContent>
         </Card>
       </div>
     </div>

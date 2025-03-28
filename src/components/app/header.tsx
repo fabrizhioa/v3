@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useAuth } from "@/contexts/auth/context";
 import { NAV_LINKS } from "@/libs/navlink";
 import { Rocket } from "lucide-react";
