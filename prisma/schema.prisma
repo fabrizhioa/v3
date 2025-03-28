@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// modelos usuario
+
+model usuario {
+  id                      String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario                 String                       @unique(map: "nombre_usuario") @db.VarChar(16)
+  correo                  String                       @unique(map: "correo_usuario") @db.VarChar(255)
+  clave                   String
+  nombre_completo         String                       @db.VarChar(45)
+  pais                    String                       @db.VarChar(45)
+  fecha_nacimiento        String                       @db.VarChar(45)
+  fecha_creacion          DateTime?                    @default(now()) @db.Timestamp(6)
+  ruta_imagen             String                       @default("/assets/images/default-user.png") @db.VarChar(200)
+  biografia               String?                      @default("Soy nuevo en mindsovermarket") @db.VarChar(900)
+  ctrl                    Int                          @default(0)
+  bloqueado               Boolean                      @default(false)
+  experencia_total        Int                          @default(0)
+  id_referente            String?                      @db.Uuid
+  conexiones_usuario      conexiones_usuario?
+  suscripciones_creadas   suscripcion[]
+  cursos_creados          curso[]
+  curso_elementos_likes   curso_elemento_likes[]
+  curso_progresos_usuario curso_progreso_usuario[]
+  curso_reconocimientos   curso_reconociento_usuario[]
+
+  referente usuario?  @relation("Referencia", fields: [id_referente], references: [id])
+  referidos usuario[] @relation("Referencia")
+
+  ventas  ventas[] @relation("VentasUsuario")
+  compras ventas[] @relation("ComprasUsuario")
+  Alerta  Alerta[]
+
+  @@index([id_referente], map: "id_referente_usuario")
+}
+
+model conexiones_usuario {
+  id_usuario String @id @db.Uuid
+  token      String
+
+  usuario usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+}
+
+// modelos ventas
+
+model ventas {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_curso         String?  @db.Uuid
+  id_webinar       String?  @db.Uuid
+  id_alerta        String?  @db.Uuid
+  id_repeticion    String?  @db.Uuid
+  id_analisis      String?  @db.Uuid
+  id_suscripcion   String?  @db.Uuid
+  tipo             String
+  precio           Decimal  @db.Money
+  fecha            DateTime @default(now()) @db.Timestamp(6)
+  id_comprador     String   @db.Uuid
+  id_vendedor      String   @db.Uuid
+  id_transaccion   String
+  fecha_expiracion DateTime
+
+  comprador   usuario      @relation("ComprasUsuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador", onUpdate: Cascade)
+  vendedor    usuario      @relation("VentasUsuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor", onUpdate: Cascade)
+  suscripcion suscripcion? @relation("Suscripcion", fields: [id_suscripcion], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  curso       curso?       @relation("Cursos", fields: [id_curso], references: [id], onDelete: NoAction, onUpdate: Cascade)
+}
+
+// modelos suscripciones
+
+model suscripcion {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_creador       String   @db.Uuid
+  titulo           String   @db.VarChar(45)
+  descripcion      String
+  tags             String[]
+  ruta_imagen      String   @db.VarChar(200)
+  precio           Decimal  @db.Money
+  duracion         Int
+  ruta_aprendizaje String[]
+  disponibilidad   Boolean  @default(true)
+  fecha_creacion   DateTime @default(now()) @db.Timestamp(6)
+  stars            Int      @default(0)
+
+  ventas  ventas[] @relation("Suscripcion")
+  creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, map: "creador_suscripcion")
+
+  @@index([id_creador], map: "id_creador_suscripcion")
+}
+
+// modelos cursos
+
+model curso {
+  id                         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_creador                 String                       @db.Uuid
+  titulo                     String
+  descripcion                String
+  fecha_creacion             DateTime                     @default(now())
+  tags                       String[]
+  ruta_imagen                String
+  precio                     Decimal                      @db.Money
+  duracion                   Int
+  ruta_aprendizaje           String[]
+  likes                      Int                          @default(0)
+  curso_elementos            curso_elemento[]
+  curso_progreso_usuario     curso_progreso_usuario[]
+  curso_reconociento_usuario curso_reconociento_usuario[]
+
+  ventas  ventas[] @relation("Cursos")
+  creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([id_creador], map: "cursos_creados")
+}
+
+model curso_elemento {
+  id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  titulo            String
+  descripcion       String  @db.VarChar(900)
+  ruta              String?
+  tipo              String
+  valor_experiencia Int
+  curso_id          String  @db.Uuid
+
+  likes    curso_elemento_likes[]
+  progreso curso_progreso_usuario[]
+
+  curso curso @relation(fields: [curso_id], references: [id], onDelete: Cascade, map: "relacion_curso", onUpdate: Cascade)
+}
+
+model curso_elemento_likes {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_usuario  String @db.Uuid
+  id_elemento String @db.Uuid
+
+  curso_elemento curso_elemento @relation(fields: [id_elemento], references: [id], onDelete: Cascade, map: "relacion_elemento")
+  usuario        usuario        @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_user")
+
+  @@index([id_elemento], map: "elemento_likes")
+  @@index([id_usuario], map: "usuario_curso_elemento_likes")
+}
+
+model curso_progreso_usuario {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_curso    String   @db.Uuid
+  id_usuario  String   @db.Uuid
+  id_elemento String   @db.Uuid
+  date        DateTime @default(now())
+
+  curso          curso          @relation(fields: [id_curso], references: [id], onDelete: Cascade, map: "relacion_curso")
+  curso_elemento curso_elemento @relation(fields: [id_elemento], references: [id], onDelete: Cascade, map: "relacion_elemento")
+  usuario        usuario        @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_usuario")
+
+  @@index([id_curso], map: "curso_progreso")
+  @@index([id_elemento], map: "elemento_progreso")
+  @@index([id_usuario], map: "progreso_usuario")
+}
+
+model curso_reconociento_usuario {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_curso   String   @db.Uuid
+  id_usuario String   @db.Uuid
+  date       DateTime @default(now())
+
+  curso   curso   @relation(fields: [id_curso], references: [id], onDelete: Cascade, map: "relacion_curso")
+  usuario usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_usuario")
+
+  @@index([id_curso], map: "curso_reconocimiento")
+  @@index([id_usuario], map: "usuario_reconocimiento")
+}
+
+// Alertas
+
+enum AlertDirection {
+  bullish
+  bearish
+}
+
+enum AlertPriority {
+  low
+  medium
+  high
+}
+
+enum AlertTimeframe {
+  minutes_1
+  minutes_5
+  minutes_15
+  minutes_30
+  hours_1
+  hours_4
+  days_1
+  weeks_1
+}
+
+model Alerta {
+  id                String          @id @default(uuid())
+  id_creador        String
+  mercado           String
+  tipo              String // Assuming AlertType is a string, adjust if needed
+  precio            String
+  direccion         AlertDirection
+  descripcion       String
+  prioridad         AlertPriority
+  objetivos         String[]        @default([])
+  stop_loss         String?
+  timeframe         AlertTimeframe?
+  fecha_creacion    DateTime        @default(now())
+  fecha_publicacion DateTime?
+  publicada         Boolean         @default(false)
+  creador           usuario?        @relation(fields: [id_creador], references: [id])
+}
