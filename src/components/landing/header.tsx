@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { LogIn } from "lucide-react";
 // import { Button } from "../ui/button";
 // import { LogIn } from "lucide-react";
 
@@ -16,7 +18,7 @@ export default function LandingHeader() {
           </Link>
         </div>
         <div className="flex items-center gap-2">
-          {/* <Button variant="outline">
+          <Button variant="outline">
             <Link href="/app/auth/login" className="flex items-center ">
               <span className="hidden md:inline">Iniciar sesión</span>
               <LogIn className="md:hidden" />
@@ -26,7 +28,7 @@ export default function LandingHeader() {
             <Link href="/app/auth/register" className="flex items-center">
               Registrarse
             </Link>
-          </Button> */}
+          </Button>
         </div>
       </div>
     </header>
