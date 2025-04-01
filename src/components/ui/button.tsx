@@ -1,9 +1,13 @@
-import { cn } from "@/libs/utils";
+import { cn } from "@/lib/utils";
 import * as React from "react";
 const buttonVariants = ({
   variant = "default",
   size = "default",
   className = "",
+}: {
+  variant?: string;
+  size?: string;
+  className?: string;
 }) =>
   cn(
     "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -31,10 +35,13 @@ const buttonVariants = ({
 const Button = React.forwardRef<
   HTMLButtonElement,
   {
+    disabled?: boolean;
+    type?: "button" | "reset" | "submit";
     variant?: string;
     size?: string;
     className?: string;
     children: React.ReactNode;
+    onClick?: React.MouseEventHandler<HTMLButtonElement>;
   }
 >(({ className, variant, size, ...props }, ref) => {
   const Comp = "button";
@@ -42,6 +49,7 @@ const Button = React.forwardRef<
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
       ref={ref}
+      type={props.type ?? "button"}
       {...props}
     />
   );

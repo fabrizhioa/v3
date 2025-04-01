@@ -1,4 +1,4 @@
-import { cn } from "@/libs/utils";
+import { cn } from "@/lib/utils";
 
 const badgeVariants = ({ variant = "default" }) =>
   cn(

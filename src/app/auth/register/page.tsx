@@ -1,21 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-// import { LoginForm } from "@/app/components/auth/login-form";
 
-export const metadata = {
-  title: "Iniciar sesión | Minds Over Market",
-  description: "Inicia sesión en tu cuenta de Minds Over Market",
+import { AuthCard } from "@/components/auth/auth-card";
+import { RegisterForm } from "@/components/auth/register-form";
+import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "Registro | Minds Over Market",
+  description: "Crea una nueva cuenta en Minds Over Market",
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
       <div className="absolute top-4 left-4">
@@ -38,17 +34,12 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
-              Iniciar sesión
-            </CardTitle>
-            <CardDescription className="text-center">
-              Ingresa tus credenciales para acceder a tu cuenta
-            </CardDescription>
-          </CardHeader>
-          <CardContent>{/* <LoginForm /> */}</CardContent>
-        </Card>
+        <AuthCard
+          title="Crear cuenta"
+          description="Regístrate para acceder a todas las funcionalidades de Minds Over Market"
+        >
+          <RegisterForm />
+        </AuthCard>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
-import { AlertProvider } from "@/contexts/alert/context";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { AuthContextProvider } from "@/contexts/auth/context";
+import { AuthContextProvider } from "@/components/contexts/auth/context";
+import { Toaster, ToastProvider } from "@/components/ui/toaster";
 
 const PoppinsFont = Poppins({
   subsets: ["latin"],
@@ -60,9 +60,12 @@ export default function RootLayout({
       <body
         className={`${PoppinsFont.className} antialiased flex flex-col min-h-dvh   text-white dark`}
       >
-        <AlertProvider>
-          <AuthContextProvider>{children}</AuthContextProvider>
-        </AlertProvider>
+        <ToastProvider>
+          <AuthContextProvider>
+            {children}
+            <Toaster />
+          </AuthContextProvider>
+        </ToastProvider>
       </body>
     </html>
   );

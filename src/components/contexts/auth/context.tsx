@@ -1,7 +1,7 @@
 "use client";
 import { AuthAction, AuthContextProps, UserData } from "@/types/auth";
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { validarConexionUsuario } from "./actions";
+import { validarConexionUsuario } from "@/actions/auth";
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
@@ -50,6 +50,7 @@ export const AuthContextProvider = ({
 
   useEffect(() => {
     validarConexion().then((res) => {
+      console.log(res);
       if (!res) {
         dispatch({
           type: "login",
@@ -64,8 +65,8 @@ export const AuthContextProvider = ({
     });
   }, []);
 
-  function isSubscriptionExpired() {
-    return Boolean(auth?.suscription_expired);
+  function membresiaExpirada() {
+    return Boolean(auth?.expiracion_membresia);
   }
 
   return (
@@ -75,7 +76,7 @@ export const AuthContextProvider = ({
         authDispatch: dispatch,
         validarConexion,
         isLogged: auth === null ? null : Boolean(auth.id),
-        isSubscriptionExpired,
+        isSubscriptionExpired: membresiaExpirada,
       }}
     >
       {children}

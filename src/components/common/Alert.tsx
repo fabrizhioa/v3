@@ -1,5 +1,5 @@
 "use client";
-import { useAlertModal } from "@/contexts/alert/context";
+import { useAlertModal } from "@/components/contexts/alert/context";
 import { AlertProps } from "@/types/alert";
 import {
   CircleAlertIcon,

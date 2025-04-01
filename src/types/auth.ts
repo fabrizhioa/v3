@@ -1,9 +1,15 @@
-import { usuario } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 
-export type UserData = Omit<usuario, "clave"> & {
-  expiration?: null | string;
-  suscription_expired?: boolean;
-};
+export type UserData = {
+    usuario: string;
+    id: string;
+    nombre_completo: string;
+    avatar: string;
+    rol: $Enums.RolUsuario;
+    membresia: string | null;
+    expiracion_membresia: Date | null;
+    experiencia_total: number;
+}
 
 export type AuthAction =
   | { type: "login"; payload: UserData }

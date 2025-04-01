@@ -1,5 +1,5 @@
-import { useAuth } from "@/contexts/auth/context";
-import { NAV_LINKS } from "@/libs/navlink";
+import { useAuth } from "@/components/contexts/auth/context";
+import { NAV_LINKS } from "@/lib/navlink";
 import { LogOutIcon } from "lucide-react";
 import Image from "next/image";
 import NavLink from "./navlink";

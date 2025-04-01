@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/libs/prisma";
+import prisma from "@/lib/prisma";
 
 export async function getLandingData() {
   // Last three courses
@@ -10,6 +10,9 @@ export async function getLandingData() {
       fecha_creacion: "desc",
     },
   });
+
+  // const alerts = await prisma.
+
   // Last three alerts
   // const alerts = await prisma.ale
   // Last three LiveClasses

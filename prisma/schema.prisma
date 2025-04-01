@@ -9,8 +9,21 @@ datasource db {
 
 // modelos usuario
 
+enum RolUsuario {
+  USUARIO
+  INSTRUCTOR
+  ADMIN
+  DESARROLLADOR
+}
+
+enum GeneroUsuario {
+  MASCULINO
+  FEMENINO
+  OTRO
+}
+
 model usuario {
-  id                      String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                      String                       @id @default(uuid()) @db.Uuid
   usuario                 String                       @unique(map: "nombre_usuario") @db.VarChar(16)
   correo                  String                       @unique(map: "correo_usuario") @db.VarChar(255)
   clave                   String
@@ -18,64 +31,76 @@ model usuario {
   pais                    String                       @db.VarChar(45)
   fecha_nacimiento        String                       @db.VarChar(45)
   fecha_creacion          DateTime?                    @default(now()) @db.Timestamp(6)
-  ruta_imagen             String                       @default("/assets/images/default-user.png") @db.VarChar(200)
-  biografia               String?                      @default("Soy nuevo en mindsovermarket") @db.VarChar(900)
-  ctrl                    Int                          @default(0)
+  telefono                String?                      @db.VarChar(15)
+  genero                  GeneroUsuario
+  // datos visuales
+  avatar                  String                       @default("/assets/images/default-user.png") @db.VarChar(200)
+  biografia               String?                      @default("Soy nuevo en mindsovermarket!!") @db.VarChar(900)
+  rol                     RolUsuario                   @default(USUARIO)
   bloqueado               Boolean                      @default(false)
-  experencia_total        Int                          @default(0)
-  id_referente            String?                      @db.Uuid
+  // redes sociales
+  facebook_url            String?
+  instagram_url           String?
+  twitter_url             String?
+  // membresia
+  membresia               String?                      @db.VarChar(45)
+  expiracion_membresia    DateTime?
+  // otros datos
+  experiencia_total       Int                          @default(0)
+  // relaciones
   conexiones_usuario      conexiones_usuario?
-  suscripciones_creadas   suscripcion[]
   cursos_creados          curso[]
   curso_elementos_likes   curso_elemento_likes[]
   curso_progresos_usuario curso_progreso_usuario[]
   curso_reconocimientos   curso_reconociento_usuario[]
 
-  referente usuario?  @relation("Referencia", fields: [id_referente], references: [id])
-  referidos usuario[] @relation("Referencia")
-
-  ventas  ventas[] @relation("VentasUsuario")
-  compras ventas[] @relation("ComprasUsuario")
+  ventas  ventas[] @relation("ventas_usuario")
+  compras ventas[] @relation("compras_usuario")
   Alerta  Alerta[]
-
-  @@index([id_referente], map: "id_referente_usuario")
 }
 
 model conexiones_usuario {
-  id_usuario String @id @db.Uuid
+  id_usuario String   @id @db.Uuid
   token      String
-
-  usuario usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  fecha      DateTime @default(now()) @db.Timestamp(6)
+  usuario    usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
 // modelos ventas
 
+enum tipoProducto {
+  noticias
+  cursos
+  alertas
+  webinar
+  membresia
+}
+
 model ventas {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  id_curso         String?  @db.Uuid
-  id_webinar       String?  @db.Uuid
-  id_alerta        String?  @db.Uuid
-  id_repeticion    String?  @db.Uuid
-  id_analisis      String?  @db.Uuid
-  id_suscripcion   String?  @db.Uuid
-  tipo             String
-  precio           Decimal  @db.Money
-  fecha            DateTime @default(now()) @db.Timestamp(6)
-  id_comprador     String   @db.Uuid
-  id_vendedor      String   @db.Uuid
+  id               String       @id @default(uuid()) @db.Uuid
+  id_membresia     String?      @db.Uuid
+  id_curso         String?      @db.Uuid
+  id_alerta        String?      @db.Uuid
+  id_webinar       String?      @db.Uuid
+  id_noticias      String?      @db.Uuid
+  tipo             tipoProducto
+  precio           Decimal      @db.Money
+  fecha            DateTime     @default(now()) @db.Timestamp(6)
+  id_comprador     String       @db.Uuid
+  id_vendedor      String       @db.Uuid
   id_transaccion   String
   fecha_expiracion DateTime
 
-  comprador   usuario      @relation("ComprasUsuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador", onUpdate: Cascade)
-  vendedor    usuario      @relation("VentasUsuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor", onUpdate: Cascade)
-  suscripcion suscripcion? @relation("Suscripcion", fields: [id_suscripcion], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  curso       curso?       @relation("Cursos", fields: [id_curso], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  comprador  usuario    @relation("compras_usuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador", onUpdate: Cascade)
+  vendedor   usuario    @relation("ventas_usuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor", onUpdate: Cascade)
+  cursos     curso?     @relation("ventas_cursos", fields: [id_curso], references: [id])
+  membresias membresia? @relation("ventas_membresia", fields: [id_membresia], references: [id])
 }
 
 // modelos suscripciones
 
-model suscripcion {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model membresia {
+  id               String   @id @default(uuid()) @db.Uuid
   id_creador       String   @db.Uuid
   titulo           String   @db.VarChar(45)
   descripcion      String
@@ -87,9 +112,7 @@ model suscripcion {
   disponibilidad   Boolean  @default(true)
   fecha_creacion   DateTime @default(now()) @db.Timestamp(6)
   stars            Int      @default(0)
-
-  ventas  ventas[] @relation("Suscripcion")
-  creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, map: "creador_suscripcion")
+  ventas           ventas[] @relation("ventas_membresia")
 
   @@index([id_creador], map: "id_creador_suscripcion")
 }
@@ -97,7 +120,7 @@ model suscripcion {
 // modelos cursos
 
 model curso {
-  id                         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                         String                       @id @default(uuid()) @db.Uuid
   id_creador                 String                       @db.Uuid
   titulo                     String
   descripcion                String
@@ -112,7 +135,7 @@ model curso {
   curso_progreso_usuario     curso_progreso_usuario[]
   curso_reconociento_usuario curso_reconociento_usuario[]
 
-  ventas  ventas[] @relation("Cursos")
+  ventas  ventas[] @relation("ventas_cursos")
   creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([id_creador], map: "cursos_creados")
@@ -134,7 +157,7 @@ model curso_elemento {
 }
 
 model curso_elemento_likes {
-  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String @id @default(uuid()) @db.Uuid
   id_usuario  String @db.Uuid
   id_elemento String @db.Uuid
 
@@ -146,7 +169,7 @@ model curso_elemento_likes {
 }
 
 model curso_progreso_usuario {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   id_curso    String   @db.Uuid
   id_usuario  String   @db.Uuid
   id_elemento String   @db.Uuid
@@ -162,7 +185,7 @@ model curso_progreso_usuario {
 }
 
 model curso_reconociento_usuario {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
   id_curso   String   @db.Uuid
   id_usuario String   @db.Uuid
   date       DateTime @default(now())
