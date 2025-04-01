@@ -1,5 +1,5 @@
 "use client";
-import Alert from "@/components/common/Alert";
+import Alert from "@/components/common/alert";
 import { AlertContextProps, AlertProps } from "@/types/alert";
 import { createContext, useContext, useState } from "react";
 
