@@ -44,6 +44,14 @@
     @apply bg-background text-foreground;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    text-wrap: balance;
+  }
+
   /* Asegurar que el modo oscuro se aplique correctamente */
   html {
     color-scheme: dark;

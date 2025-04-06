@@ -25,7 +25,7 @@ export default function LandingHeader() {
             </Link>
           </Button>
           <Button>
-            <Link href="/app/auth/register" className="flex items-center">
+            <Link href="/auth/register" className="flex items-center">
               Registrarse
             </Link>
           </Button>

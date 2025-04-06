@@ -36,7 +36,7 @@ export default function HeroSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
           <div className="flex flex-col space-y-8">
             <p className="inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium">
-              <span className="flex h-2 w-2 aspect-square rounded-full bg-green-500 mr-2 bg-primary"></span>
+              <span className="flex h-2 w-2 aspect-square rounded-full bg-green-500 mr-2 bg-primary animate-pulse" />
               Invierte de la manera más sencilla y obten resultados
               extraordinarios
             </p>
@@ -50,19 +50,19 @@ export default function HeroSection() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg">
-                <Link href="/register" className="flex items-center gap-2">
+              <Link href="/auth/register" className="flex items-center gap-2">
+                <Button size="lg">
                   Comenzar ahora <ArrowRight className="rounded-lg h-4 w-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline">
-                <Link
-                  href="/login?hr=courses"
-                  className="flex items-center gap-2"
-                >
+                </Button>
+              </Link>
+              <Link
+                href="/auth/login?hr=catalogo"
+                className="flex items-center gap-2"
+              >
+                <Button size="lg" variant="outline">
                   Explorar cursos
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
             <div className="flex items-center gap-8 pt-4">
               <div className="flex flex-col">

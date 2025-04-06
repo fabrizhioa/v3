@@ -53,10 +53,26 @@ model usuario {
   curso_elementos_likes   curso_elemento_likes[]
   curso_progresos_usuario curso_progreso_usuario[]
   curso_reconocimientos   curso_reconociento_usuario[]
+  seguidos                seguidores[]                 @relation("seguido_id")
+  seguidores              seguidores[]                 @relation("seguidor_id")
+  // otros
+  ventas                  ventas[]                     @relation("ventas_usuario")
+  compras                 ventas[]                     @relation("compras_usuario")
+  alertas                 alerta[]
+  articulos               articulo[]
+}
 
-  ventas  ventas[] @relation("ventas_usuario")
-  compras ventas[] @relation("compras_usuario")
-  Alerta  Alerta[]
+model seguidores {
+  id          String   @id @default(uuid()) @db.Uuid
+  seguidor_id String   @db.Uuid
+  seguido_id  String   @db.Uuid
+  fecha       DateTime @default(now()) @db.Date
+  //relacion
+  seguidor    usuario  @relation("seguidor_id", fields: [seguidor_id], references: [id], onDelete: Cascade)
+  seguido     usuario  @relation("seguido_id", fields: [seguido_id], references: [id], onDelete: Cascade)
+
+  //indices
+  @@index([seguidor_id, seguido_id], map: "seguidor_id_seguido_id")
 }
 
 model conexiones_usuario {
@@ -221,7 +237,7 @@ enum AlertTimeframe {
   weeks_1
 }
 
-model Alerta {
+model alerta {
   id                String          @id @default(uuid())
   id_creador        String          @db.Uuid
   mercado           String
@@ -237,4 +253,54 @@ model Alerta {
   fecha_publicacion DateTime?
   publicada         Boolean         @default(false)
   creador           usuario?        @relation(fields: [id_creador], references: [id])
+}
+
+// ARTICULO
+
+enum TendenciaArticulo {
+  alcista
+  bajista
+  neutral
+}
+
+model articulo {
+  id        String            @id @default(uuid()) @db.Uuid
+  titulo    String
+  fecha     DateTime          @db.Date
+  estrellas Int
+  categoria String
+  mercado   String
+  tendencia TendenciaArticulo
+  resumen   String?
+
+  // relacion contenido - articulo
+  contenido articulo_elemento[]
+
+  // relacion autor - articulo
+  autor    usuario @relation(fields: [autor_id], references: [id])
+  autor_id String  @db.Uuid
+}
+
+enum tipo_elemento_articulo {
+  paragraph
+  image
+  video
+  quote
+  heading
+  list
+}
+
+model articulo_elemento {
+  id          String                 @id @default(uuid()) @db.Uuid
+  content     String
+  src         String?
+  alt         String?
+  level       Int?
+  items       String[]
+  // tipo elemento
+  type        tipo_elemento_articulo
+  // relacion
+  articulo    articulo               @relation(fields: [articulo_id], references: [id])
+  articulo_id String                 @db.Uuid
+  position    Int?
 }
