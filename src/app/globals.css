@@ -22,8 +22,8 @@
     --muted: 230 10% 12%; /* Igual que --secondary */
     --muted-foreground: 220 20% 60%; /* Gris claro */
 
-    --accent: 48 96% 53%; /* Amarillo (se mantiene) */
-    --accent-foreground: 0 0% 0%; /* Negro puro */
+    --accent: 0 0% 96%; /* Amarillo (se mantiene) */
+    --accent-foreground: 0 0% 3%; /* Negro puro */
 
     --destructive: 0 85% 61%; /* Rojo (se mantiene) */
     --destructive-foreground: 0 0% 96%; /* Blanco */
