@@ -19,7 +19,7 @@ export default function LandingHeader() {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
-            <Link href="/app/auth/login" className="flex items-center ">
+            <Link href="/auth/login" className="flex items-center ">
               <span className="hidden md:inline">Iniciar sesión</span>
               <LogIn className="md:hidden" />
             </Link>

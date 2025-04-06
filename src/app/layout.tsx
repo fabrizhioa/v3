@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${PoppinsFont.className} antialiased flex flex-col min-h-dvh   text-white dark`}
+        className={`${PoppinsFont.className} antialiased flex flex-col min-h-dvh text-white dark`}
       >
         <ToastProvider>
           <AuthContextProvider>

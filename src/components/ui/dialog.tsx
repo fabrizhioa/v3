@@ -2,23 +2,28 @@
 
 import React, { useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface DialogProps {
   children: React.ReactNode;
+  className?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   footer?: React.ReactNode;
 }
 
 export interface DialogHeaderProps {
+  className?: string;
   children: React.ReactNode;
 }
 
 export interface DialogTitleProps {
+  className?: string;
   children: React.ReactNode;
 }
 
 export interface DialogContentProps {
+  className?: string;
   children: React.ReactNode;
 }
 
@@ -30,16 +35,27 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({ children }) => {
   );
 };
 
-export const DialogTitle: React.FC<DialogTitleProps> = ({ children }) => {
+export const DialogTitle: React.FC<DialogTitleProps> = ({
+  children,
+  className,
+}) => {
   return (
-    <h2 className="text-lg font-semibold leading-none tracking-tight">
+    <h2
+      className={cn(
+        "text-lg font-semibold leading-none tracking-tight",
+        className
+      )}
+    >
       {children}
     </h2>
   );
 };
 
-export const DialogContent: React.FC<DialogContentProps> = ({ children }) => {
-  return <div>{children}</div>;
+export const DialogContent: React.FC<DialogContentProps> = ({
+  children,
+  className,
+}) => {
+  return <div className={className}>{children}</div>;
 };
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -75,7 +91,7 @@ export const Dialog: React.FC<DialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
       <div
         ref={dialogRef}
-        className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-lg"
+        className="relative bg-card max-h-[90%] rounded-lg shadow-lg p-6 w-max max-w-screen-lg overflow"
       >
         {children}
         <button

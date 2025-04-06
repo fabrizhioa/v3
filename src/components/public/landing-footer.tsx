@@ -6,7 +6,7 @@ import {
   YoutubeIcon,
 } from "lucide-react";
 import Link from "next/link";
-import NavLink from "./LandingNavLink";
+import NavLink from "./landing-navlink";
 
 export default function LandingFooter() {
   return (

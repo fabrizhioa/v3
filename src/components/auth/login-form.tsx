@@ -3,20 +3,18 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { useAuth } from "@/components/contexts/auth/context";
+import { useAuth } from "@/components/contexts/auth/context";
 import { ingreso } from "@/actions/auth";
 import { useToast } from "../ui/toaster";
 
 export default function LoginForm() {
-  const router = useRouter();
   const toast = useToast();
-  // const { authDispatch } = useAuth();
+  const { authDispatch } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,13 +57,13 @@ export default function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    toast.addToast({
-      title: "Acceso Denegado",
-      description: "El acceso aun no se encuentra disponible",
-      type: "error",
-    });
+    // toast.addToast({
+    //   title: "Acceso Denegado",
+    //   description: "El acceso aun no se encuentra disponible",
+    //   type: "error",
+    // });
 
-    return;
+    // return;
 
     setIsLoading(true);
 
@@ -91,9 +89,9 @@ export default function LoginForm() {
         title: "Inicio de sesión exitoso",
         description: "Bienvenido a Minds Over Market",
       });
-      // authDispatch({ type: "login", payload: consulta.datos });
-      // localStorage.setItem("token", consulta.token);
-      router.push("/app");
+      authDispatch({ type: "login", payload: consulta.datos });
+      localStorage.setItem("token", consulta.token);
+      // router.push("/app");
     } else {
       toast.addToast({
         title: "Error de inicio de sesión",

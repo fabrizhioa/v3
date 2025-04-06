@@ -8,10 +8,10 @@ export function Loading() {
         alt="Minds Over Market"
         className="animate-bounce size-16"
         priority={true}
-        width={64}
-        height={64}
+        width={128}
+        height={128}
       />
-      <span>Cargand ...</span>
+      <span>Cargando ...</span>
     </div>
   );
 }

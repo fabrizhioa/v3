@@ -15,8 +15,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-dvh w-full flex flex-col items-center justify-center">
         <Loading />
-        <br />
-        Cargando...
       </div>
     );
 
@@ -24,9 +22,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="flex flex-col min-h-dvh gap-y-8">
+      <div className="flex flex-col min-h-dvh">
         <Header />
-        <main className="container mx-auto h-full">{children}</main>
+        <main className="min-h-full flex-1 grid">{children}</main>
 
         <Menu />
       </div>

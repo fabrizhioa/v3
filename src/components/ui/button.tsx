@@ -43,13 +43,14 @@ const Button = React.forwardRef<
     children: React.ReactNode;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
   }
->(({ className, variant, size, ...props }, ref) => {
+>(({ className, variant, size, onClick, ...props }, ref) => {
   const Comp = "button";
   return (
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
       ref={ref}
       type={props.type ?? "button"}
+      onClick={onClick}
       {...props}
     />
   );

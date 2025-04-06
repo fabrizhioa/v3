@@ -6,7 +6,7 @@ import {
   UserPlusIcon,
 } from "lucide-react";
 import Image from "next/image";
-import NavLink from "./LandingNavLink";
+import NavLink from "./landing-navlink";
 
 export default function LandingMenu() {
   return (

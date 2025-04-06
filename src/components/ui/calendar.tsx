@@ -110,6 +110,7 @@ function Calendar({
     <div className={`p-3 ${className}`}>
       <div className="flex justify-center items-center relative pt-1">
         <button
+          type="button"
           onClick={prevMonth}
           className="absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         >
@@ -122,6 +123,7 @@ function Calendar({
           })}
         </span>
         <button
+          type="button"
           onClick={nextMonth}
           className="absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         >
@@ -152,8 +154,9 @@ function Calendar({
                 >
                   {dayData.day !== null && (
                     <button
+                      type="button"
                       onClick={() => handleDayClick(dayData.day as number)}
-                      className={`h-9 w-9 p-0 font-normal ${
+                      className={`h-9 w-9 p-0 font-normal rounded ${
                         isSameDay(
                           value,
                           new Date(dayData.year, dayData.month, dayData.day)

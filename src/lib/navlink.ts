@@ -3,7 +3,8 @@ import {
   LucideProps,
   NewspaperIcon,
   SettingsIcon,
-  StoreIcon,
+  ShoppingCartIcon,
+  
 } from "lucide-react";
 
 interface NavLinkProps {
@@ -18,8 +19,8 @@ interface NavLinkProps {
 }
 
 export const NAV_LINKS: NavLinkProps[] = [
-  { title: "Feeds", link: "/app", icon: NewspaperIcon },
-  { title: "Dashboard", link: "/app/dashboard", icon: LayoutDashboardIcon },
-  { title: "Tienda", link: "/app/store", icon: StoreIcon },
-  { title: "Perfil", link: "/app/profile", icon: SettingsIcon },
+  { title: "Articulos", link: "/app", icon: NewspaperIcon },
+  { title: "Tablero", link: "/app/tablero", icon: LayoutDashboardIcon },
+  { title: "Catagalo", link: "/app/catalogo", icon: ShoppingCartIcon },
+  { title: "Perfil", link: "/app/perfil", icon: SettingsIcon },
 ];

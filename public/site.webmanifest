@@ -1,1 +1,151 @@
-{"name":"","short_name":"","icons":[{"src":"/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#ffffff","background_color":"#ffffff","display":"standalone"}
+{
+	"theme_color": "#0e131f",
+	"background_color": "#0e131f",
+	"display": "standalone",
+	"display_override": ["standalone", "fullscreen"],
+	"start_url": ".",
+	"name": "Minds Over Market",
+	"short_name": "Minds",
+	"description": "Best trading academy web app",
+	"categories": ["education", "trading"],
+	"dir": "ltr",
+	"version": "2.3.1",
+	"icons": [
+		{
+			"src": "./assets/icons/Icon_28.png",
+			"sizes": "28x28",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_29.png",
+			"sizes": "29x29",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_36.png",
+			"sizes": "36x36",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_40.png",
+			"sizes": "40x40",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_48.png",
+			"sizes": "48x48",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_50.png",
+			"sizes": "50x50",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_57.png",
+			"sizes": "57x57",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_58.png",
+			"sizes": "58x58",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_60.png",
+			"sizes": "60x60",
+			"type": "image/png"
+		},
+
+		{
+			"src": "./assets/icons/Icon_72.png",
+			"sizes": "72x72",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_75.png",
+			"sizes": "75x75",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_76.png",
+			"sizes": "76x76",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_80.png",
+			"sizes": "80x80",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_87.png",
+			"sizes": "87x87",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_96.png",
+			"sizes": "96x96",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_100.png",
+			"sizes": "100x100",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_114.png",
+			"sizes": "114x114",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_120.png",
+			"sizes": "120x120",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_144.png",
+			"sizes": "144x144",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_152.png",
+			"sizes": "152x152",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_167.png",
+			"sizes": "167x167",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_180.png",
+			"sizes": "180x180",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_256.png",
+			"sizes": "256x256",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_384.png",
+			"sizes": "384x384",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "./assets/icons/Icon_1024.png",
+			"sizes": "1024x1024",
+			"type": "image/png"
+		}
+	]
+}
