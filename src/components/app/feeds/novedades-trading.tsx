@@ -2,14 +2,8 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -17,429 +11,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Heart,
   Calendar,
   User,
   DollarSign,
   TrendingUp,
   TrendingDown,
   ArrowRight,
+  Star,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { formatDateLong } from "@/utils/utils";
-
-// Tipo para los elementos de contenido
-type ContentElement = {
-  type: "paragraph" | "image" | "video" | "quote" | "heading" | "list";
-  content: string;
-  src?: string;
-  alt?: string;
-  level?: 1 | 2 | 3;
-  items?: string[];
-};
-
-// Tipo para los datos de novedades de trading
-type NovedadTrading = {
-  id: number;
-  titulo: string;
-  fecha: string;
-  autor: string;
-  likes: number;
-  contenido: ContentElement[];
-  categoria: string;
-  mercado: string;
-  tendencia?: "alcista" | "bajista" | "neutral";
-};
-
-// Datos de ejemplo relacionados con trading con contenido rico
-const novedadesTrading: NovedadTrading[] = [
-  {
-    id: 1,
-    titulo: "Bitcoin rompe resistencia clave de $75,000",
-    fecha: "2025-03-15",
-    autor: "Carlos Martínez",
-    likes: 87,
-    contenido: [
-      {
-        type: "paragraph",
-        content:
-          "El precio de Bitcoin ha superado finalmente la resistencia clave de $75,000, estableciendo un nuevo máximo histórico. Los analistas sugieren que este movimiento podría abrir el camino hacia los $80,000 en las próximas semanas si el volumen de compra se mantiene.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Gráfico de Bitcoin rompiendo resistencia",
-        content:
-          "Gráfico de Bitcoin mostrando la ruptura de la resistencia de $75,000",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Análisis Técnico",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Desde una perspectiva técnica, Bitcoin ha formado un patrón de continuación alcista después de consolidarse durante varias semanas por debajo de la resistencia de $75,000. El RSI muestra una fuerte presión compradora, aunque está entrando en territorio de sobrecompra, lo que podría indicar una posible corrección a corto plazo.",
-      },
-      {
-        type: "quote",
-        content:
-          "Este movimiento marca el inicio de lo que podría ser la última fase del ciclo alcista de Bitcoin en 2025, con objetivos potenciales en $85,000-$90,000 antes de una corrección significativa",
-      },
-      {
-        type: "video",
-        src: "https://www.example.com/videos/bitcoin-analysis.mp4",
-        content: "Análisis detallado del movimiento de Bitcoin",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Factores Fundamentales",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Entre los factores fundamentales que han impulsado este movimiento se encuentran la creciente adopción institucional, la reducción de la inflación en Estados Unidos y la expectativa de políticas monetarias más flexibles por parte de la Reserva Federal.",
-      },
-      {
-        type: "list",
-        items: [
-          "Aumento de la inversión institucional en Bitcoin",
-          "Reducción de las tasas de interés en economías clave",
-          "Creciente adopción como reserva de valor corporativa",
-          "Mejoras en la infraestructura de la red Bitcoin",
-        ],
-        content: "Factores clave que impulsan el precio de Bitcoin",
-      },
-    ],
-    categoria: "Criptomonedas",
-    mercado: "Bitcoin",
-    tendencia: "alcista",
-  },
-  {
-    id: 2,
-    titulo: "La FED mantiene tasas de interés sin cambios",
-    fecha: "2025-03-12",
-    autor: "Ana Rodríguez",
-    likes: 54,
-    contenido: [
-      {
-        type: "paragraph",
-        content:
-          "La Reserva Federal de EE.UU. ha decidido mantener las tasas de interés sin cambios en su última reunión, en línea con las expectativas del mercado. Esta decisión ha generado estabilidad en los mercados de valores, con el S&P 500 cerrando con una ligera ganancia.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Conferencia de prensa de la FED",
-        content:
-          "Jerome Powell durante la conferencia de prensa posterior a la reunión de la FED",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Implicaciones para los Mercados",
-      },
-      {
-        type: "paragraph",
-        content:
-          "La decisión de la FED de mantener las tasas sin cambios tiene importantes implicaciones para diversos mercados financieros. En el mercado de divisas, el dólar estadounidense se ha mantenido relativamente estable frente a las principales monedas, mientras que los mercados de bonos han mostrado una ligera reducción en los rendimientos.",
-      },
-      {
-        type: "quote",
-        content:
-          "Esperamos que la FED mantenga esta postura durante al menos los próximos dos trimestres, lo que debería proporcionar un entorno favorable para los activos de riesgo",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Para los traders de forex, esta situación sugiere que las estrategias de carry trade podrían seguir siendo efectivas, especialmente en pares que involucran al dólar estadounidense contra divisas de economías con tasas de interés más altas.",
-      },
-    ],
-    categoria: "Macroeconomía",
-    mercado: "Forex",
-    tendencia: "neutral",
-  },
-  {
-    id: 3,
-    titulo: "Estrategia de trading: Divergencias en RSI",
-    fecha: "2025-03-10",
-    autor: "Miguel López",
-    likes: 112,
-    contenido: [
-      {
-        type: "paragraph",
-        content:
-          "Las divergencias en el indicador RSI pueden ser señales poderosas para identificar posibles reversiones de tendencia. En este artículo, analizamos cómo identificar y operar estas divergencias con ejemplos prácticos en diferentes mercados.",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "¿Qué son las Divergencias en RSI?",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Una divergencia ocurre cuando el precio de un activo y un indicador técnico, en este caso el RSI (Índice de Fuerza Relativa), se mueven en direcciones opuestas. Esto puede señalar un debilitamiento de la tendencia actual y una posible reversión.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Ejemplo de divergencia RSI",
-        content:
-          "Ejemplo de divergencia bajista en RSI en el gráfico de EUR/USD",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Tipos de Divergencias",
-      },
-      {
-        type: "list",
-        items: [
-          "Divergencia Bajista: El precio forma máximos más altos, pero el RSI forma máximos más bajos",
-          "Divergencia Alcista: El precio forma mínimos más bajos, pero el RSI forma mínimos más altos",
-          "Divergencia Oculta: Útil para identificar continuaciones de tendencia",
-          "Divergencia Extendida: Ocurre a lo largo de múltiples máximos o mínimos",
-        ],
-        content: "Principales tipos de divergencias en RSI",
-      },
-      {
-        type: "video",
-        src: "https://www.example.com/videos/rsi-divergence-strategy.mp4",
-        content: "Tutorial sobre cómo operar divergencias en RSI",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Estrategia de Trading",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Para implementar una estrategia basada en divergencias de RSI, es importante seguir estos pasos: 1) Identificar la tendencia principal, 2) Buscar divergencias en el RSI, 3) Confirmar con otros indicadores o patrones de precio, 4) Establecer niveles claros de entrada, stop loss y take profit.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Estrategia de trading con RSI",
-        content:
-          "Ejemplo de operación basada en divergencia RSI en el mercado de Bitcoin",
-      },
-    ],
-    categoria: "Análisis Técnico",
-    mercado: "Múltiple",
-    tendencia: "neutral",
-  },
-  {
-    id: 4,
-    titulo: "Tesla anuncia expansión en Asia, acciones suben 8%",
-    fecha: "2025-03-08",
-    autor: "Laura Sánchez",
-    likes: 76,
-    contenido: [
-      {
-        type: "paragraph",
-        content:
-          "Tesla ha anunciado una importante expansión en el mercado asiático, con nuevas fábricas en Corea del Sur y Tailandia. Las acciones de la compañía subieron un 8% tras el anuncio, alcanzando nuevos máximos históricos.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Gráfico de acciones de Tesla",
-        content:
-          "Gráfico mostrando el aumento del 8% en las acciones de Tesla tras el anuncio",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Detalles de la Expansión",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Según el comunicado oficial, Tesla invertirá más de $5 mil millones en estas nuevas instalaciones, que se espera estén operativas para finales de 2026. La fábrica de Corea del Sur se centrará en la producción de baterías avanzadas, mientras que la planta de Tailandia se dedicará al ensamblaje de vehículos para el mercado del sudeste asiático.",
-      },
-      {
-        type: "quote",
-        content:
-          "Esta expansión representa un paso estratégico para consolidar nuestra presencia en Asia y reducir los costos logísticos para atender la creciente demanda en la región",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Implicaciones para Inversores",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Para los inversores en Tesla, esta noticia refuerza la tesis de crecimiento global de la compañía. Los analistas de varios bancos de inversión han actualizado sus objetivos de precio para las acciones de Tesla, con un consenso que ahora apunta a un potencial alcista adicional del 15-20% en los próximos 12 meses.",
-      },
-      {
-        type: "list",
-        items: [
-          "Aumento de la capacidad de producción global",
-          "Reducción de costos logísticos para el mercado asiático",
-          "Acceso a cadenas de suministro locales más eficientes",
-          "Posible introducción de modelos específicos para el mercado asiático",
-        ],
-        content: "Beneficios clave de la expansión en Asia",
-      },
-    ],
-    categoria: "Acciones",
-    mercado: "NYSE",
-    tendencia: "alcista",
-  },
-  {
-    id: 5,
-    titulo: "El petróleo cae tras aumento de inventarios en EE.UU.",
-    fecha: "2025-03-05",
-    autor: "Roberto Gómez",
-    likes: 43,
-    contenido: [
-      {
-        type: "paragraph",
-        content:
-          "Los precios del petróleo WTI han caído más de un 3% después de que el informe semanal mostrara un aumento inesperado en los inventarios de crudo de Estados Unidos. Los traders ahora esperan la reacción de la OPEP+ en su próxima reunión.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Gráfico de precios del petróleo WTI",
-        content:
-          "Gráfico mostrando la caída del 3% en los precios del petróleo WTI",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Datos de Inventarios",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Según el informe de la Administración de Información Energética (EIA), los inventarios de crudo en Estados Unidos aumentaron en 4.2 millones de barriles la semana pasada, muy por encima de las expectativas del mercado que anticipaban una disminución de 1.5 millones de barriles.",
-      },
-      {
-        type: "quote",
-        content:
-          "Este aumento inesperado en los inventarios sugiere una debilidad en la demanda doméstica de Estados Unidos, lo que podría presionar a la OPEP+ a considerar recortes adicionales de producción",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Perspectivas Técnicas",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Desde una perspectiva técnica, el petróleo WTI ha roto un importante nivel de soporte en los $72 por barril, lo que podría abrir el camino hacia los $68-$70 en las próximas sesiones. El RSI ha entrado en territorio de sobreventa, lo que podría indicar una posible estabilización o rebote a corto plazo.",
-      },
-      {
-        type: "video",
-        src: "https://www.example.com/videos/oil-market-analysis.mp4",
-        content: "Análisis detallado del mercado petrolero",
-      },
-    ],
-    categoria: "Commodities",
-    mercado: "Petróleo",
-    tendencia: "bajista",
-  },
-  {
-    id: 6,
-    titulo: "Guía completa: Gestión de riesgo en Forex",
-    fecha: "2025-03-01",
-    autor: "Elena Martín",
-    likes: 95,
-    contenido: [
-      {
-        type: "paragraph",
-        content:
-          "La gestión de riesgo es fundamental para el éxito a largo plazo en el trading de Forex. Este artículo detalla las mejores prácticas para proteger tu capital, incluyendo el tamaño adecuado de posición, el uso de stop loss y la diversificación de pares de divisas.",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Principios Fundamentales de Gestión de Riesgo",
-      },
-      {
-        type: "list",
-        items: [
-          "Nunca arriesgar más del 1-2% del capital en una sola operación",
-          "Utilizar siempre órdenes de stop loss",
-          "Mantener una relación riesgo-recompensa de al menos 1:2",
-          "Diversificar entre diferentes pares de divisas",
-          "Evitar el sobretrading y las decisiones emocionales",
-        ],
-        content: "Principios clave de gestión de riesgo en Forex",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Ejemplo de gestión de riesgo",
-        content:
-          "Ilustración de una correcta distribución del capital en diferentes operaciones",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Cálculo del Tamaño de Posición",
-      },
-      {
-        type: "paragraph",
-        content:
-          "El cálculo adecuado del tamaño de posición es quizás el aspecto más importante de la gestión de riesgo. Para determinar el tamaño correcto, debes considerar: 1) El tamaño de tu cuenta, 2) El porcentaje que estás dispuesto a arriesgar, 3) La distancia entre tu punto de entrada y tu stop loss.",
-      },
-      {
-        type: "quote",
-        content:
-          "La mayoría de los traders profesionales no arriesgan más del 1% de su capital en una sola operación. Esto les permite soportar rachas perdedoras sin comprometer significativamente su capital",
-      },
-      {
-        type: "video",
-        src: "https://www.example.com/videos/forex-risk-management.mp4",
-        content: "Tutorial sobre cálculo de tamaño de posición en Forex",
-      },
-      {
-        type: "heading",
-        level: 2,
-        content: "Correlación entre Pares de Divisas",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Entender la correlación entre diferentes pares de divisas es esencial para una gestión de riesgo efectiva. Operar simultáneamente en pares altamente correlacionados puede multiplicar inadvertidamente tu exposición al riesgo, incluso si estás siguiendo la regla del 1-2% en cada operación individual.",
-      },
-      {
-        type: "image",
-        src: "/placeholder.svg?height=400&width=800",
-        alt: "Tabla de correlación de divisas",
-        content:
-          "Tabla mostrando la correlación entre los principales pares de divisas",
-      },
-    ],
-    categoria: "Educación",
-    mercado: "Forex",
-    tendencia: "neutral",
-  },
-];
+import {
+  ArticuloConUsuario,
+  ContenidoElementoArticulo,
+} from "@/types/articulos";
+import { obtenerArticulosByUser } from "@/actions/app/articulos";
+import { useAuth } from "@/components/contexts/auth/context";
+import { Loading } from "@/components/common/loadings";
+import Link from "next/link";
 
 export default function NovedadesTrading() {
-  const [selectedNovedad, setSelectedNovedad] = useState<NovedadTrading | null>(
-    null
-  );
+  const { auth } = useAuth();
+  const [selectedArticulo, setSelectedArticulo] =
+    useState<ArticuloConUsuario | null>(null);
   const [open, setOpen] = useState(false);
-  const [likedItems, setLikedItems] = useState<number[]>([]);
+  const [likedItems, setLikedItems] = useState<string[]>([]);
+  const [articulos, setArticulos] = useState<ArticuloConUsuario[] | null>(null);
 
-  // Ordenar novedades de la más reciente a la más antigua
-  const sortedNovedades = [...novedadesTrading].sort((a, b) => {
-    return new Date(b.fecha).getTime() - new Date(a.fecha).getTime();
-  });
-
-  const handleLike = (id: number, e: React.MouseEvent) => {
+  const handleLike = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (likedItems.includes(id)) {
       setLikedItems(likedItems.filter((itemId) => itemId !== id));
@@ -448,8 +50,8 @@ export default function NovedadesTrading() {
     }
   };
 
-  const openModal = (novedad: NovedadTrading) => {
-    setSelectedNovedad(novedad);
+  const openModal = (articulo: ArticuloConUsuario) => {
+    setSelectedArticulo(articulo);
     setOpen(true);
   };
 
@@ -475,8 +77,20 @@ export default function NovedadesTrading() {
     }
   };
 
+  async function obtenerArticulos(id: string) {
+    const response = await obtenerArticulosByUser(id);
+    setArticulos(response ?? []);
+  }
+
+  useEffect(() => {
+    if (auth?.id) obtenerArticulos(auth?.id);
+  }, [auth]);
+  console.log(articulos);
   // Renderiza un elemento de contenido basado en su tipo
-  const renderContentElement = (element: ContentElement, index: number) => {
+  const renderContentElement = (
+    element: ContenidoElementoArticulo,
+    index: number
+  ) => {
     switch (element.type) {
       case "paragraph":
         return (
@@ -535,7 +149,7 @@ export default function NovedadesTrading() {
         return (
           <div key={index} className="mb-4">
             <video
-              src={element.src}
+              src={element.src as string}
               controls
               className="w-full rounded-md"
               poster="/placeholder.svg?height=400&width=800"
@@ -580,126 +194,148 @@ export default function NovedadesTrading() {
 
   return (
     <>
-      <div className="flex flex-col space-y-4 w-full">
-        {sortedNovedades.map((novedad) => (
-          <Card
-            key={novedad.id}
-            className="cursor-pointer hover:shadow-md transition-shadow w-full"
-            onClick={() => openModal(novedad)}
-          >
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-xl">{novedad.titulo}</CardTitle>
-                <Badge variant="outline">{novedad.categoria}</Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="pb-2">
-              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  <span>{formatDateLong(novedad.fecha)}</span>
+      <div className="flex flex-col space-y-4 w-full flex-1 h-full">
+        {articulos === null ? (
+          <Loading />
+        ) : articulos?.length > 0 ? (
+          articulos?.map((articulo) => (
+            <Card
+              key={articulo.id}
+              className="cursor-pointer hover:shadow-md transition-shadow w-full "
+              onClick={() => openModal(articulo)}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-xl">{articulo.titulo}</CardTitle>
+                  <Badge variant="outline">{articulo.categoria}</Badge>
                 </div>
-                <div className="flex items-center">
-                  <User className="h-4 w-4 mr-1" />
-                  <span>{novedad.autor}</span>
-                </div>
-                <div className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-1" />
-                  <span>{novedad.mercado}</span>
-                  {novedad.tendencia && (
-                    <span
-                      className={`ml-2 flex items-center ${getTendenciaColor(
-                        novedad.tendencia
-                      )}`}
+              </CardHeader>
+              <CardContent className="pb-2">
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    <span>{formatDateLong(articulo.fecha)}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Link
+                      className="flex items-center"
+                      href={"/app/usuario/" + articulo.autor.id}
                     >
-                      {getTendenciaIcon(novedad.tendencia)}
+                      <User className="h-4 w-4 mr-1" />
+                      <span>{articulo.autor.nombre_completo}</span>
+                    </Link>
+                  </div>
+                  <div className="flex items-center">
+                    <DollarSign className="h-4 w-4 mr-1" />
+                    <span>{articulo.mercado}</span>
+                    {articulo.tendencia && (
+                      <span
+                        className={`ml-2 flex items-center ${getTendenciaColor(
+                          articulo.tendencia
+                        )}`}
+                      >
+                        {getTendenciaIcon(articulo.tendencia)}
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="ml-auto flex items-center gap-1 hover:bg-transparent group hover:text-white"
+                    onClick={(e) => handleLike(articulo.id, e)}
+                  >
+                    <Star
+                      className={`h-4 w-4  ${
+                        likedItems.includes(articulo.id)
+                          ? "fill-custom-yellow text-custom-yellow group-hover:fill-transparent"
+                          : "group-hover:fill-custom-yellow text-custom-yellow"
+                      }`}
+                    />
+                    <span>
+                      {likedItems.includes(articulo.id)
+                        ? articulo.estrellas + 1
+                        : articulo.estrellas}
                     </span>
-                  )}
+                  </Button>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="ml-auto flex items-center gap-1"
-                onClick={(e) => handleLike(novedad.id, e)}
-              >
-                <Heart
-                  className={`h-4 w-4 ${
-                    likedItems.includes(novedad.id)
-                      ? "fill-red-500 text-red-500"
-                      : ""
-                  }`}
-                />
-                <span>
-                  {likedItems.includes(novedad.id)
-                    ? novedad.likes + 1
-                    : novedad.likes}
-                </span>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="min-h-full flex items-center justify-center flex-col gap-6">
+            <Image
+              src="/assets/Logo.svg"
+              width={128}
+              height={128}
+              alt="Loading..."
+            />
+            <p className="text-center text-gray-500 mt-4">
+              No hay elementos para visualizar.
+            </p>
+          </div>
+        )}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {selectedNovedad && (
+        {selectedArticulo && (
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{selectedNovedad.titulo}</DialogTitle>
+              <DialogTitle>{selectedArticulo.titulo}</DialogTitle>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="outline">{selectedNovedad.categoria}</Badge>
-                {selectedNovedad.tendencia && (
+                <Badge variant="outline">{selectedArticulo.categoria}</Badge>
+                {selectedArticulo.tendencia && (
                   <Badge
                     variant="outline"
                     className={cn(
                       "flex items-center gap-1",
-                      getTendenciaColor(selectedNovedad.tendencia)
+                      getTendenciaColor(selectedArticulo.tendencia)
                     )}
                   >
-                    {getTendenciaIcon(selectedNovedad.tendencia)}
-                    {selectedNovedad.tendencia.charAt(0).toUpperCase() +
-                      selectedNovedad.tendencia.slice(1)}
+                    {getTendenciaIcon(selectedArticulo.tendencia)}
+                    {selectedArticulo.tendencia.charAt(0).toUpperCase() +
+                      selectedArticulo.tendencia.slice(1)}
                   </Badge>
                 )}
               </div>
               <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
-                  <span>{formatDateLong(selectedNovedad.fecha)}</span>
+                  <span>{formatDateLong(selectedArticulo.fecha)}</span>
                 </div>
-                <div className="flex items-center">
+                <Link
+                  href={"/app/usuario/" + selectedArticulo.autor.id}
+                  className="flex items-center"
+                >
                   <User className="h-4 w-4 mr-1" />
-                  <span>{selectedNovedad.autor}</span>
-                </div>
+                  <span>{selectedArticulo.autor.nombre_completo}</span>
+                </Link>
                 <div className="flex items-center">
                   <DollarSign className="h-4 w-4 mr-1" />
-                  <span>{selectedNovedad.mercado}</span>
+                  <span>{selectedArticulo.mercado}</span>
                 </div>
               </div>
             </DialogHeader>
 
             <div className="mt-4 article-content">
-              {selectedNovedad.contenido.map((element, index) =>
+              {selectedArticulo.contenido?.map((element, index) =>
                 renderContentElement(element, index)
               )}
             </div>
 
             <div className="flex justify-between items-center mt-6 pt-4 border-t">
               <div className="flex items-center text-muted-foreground">
-                <Heart
-                  className={`h-5 w-5 mr-2 ${
-                    likedItems.includes(selectedNovedad.id)
-                      ? "fill-red-500 text-red-500"
+                <Star
+                  className={`h-4 w-4 mr-2 ${
+                    likedItems.includes(selectedArticulo.id)
+                      ? "fill-custom-yellow text-custom-yellow "
                       : ""
                   }`}
                 />
                 <span>
-                  {likedItems.includes(selectedNovedad.id)
-                    ? selectedNovedad.likes + 1
-                    : selectedNovedad.likes}{" "}
-                  likes
+                  {likedItems.includes(selectedArticulo.id)
+                    ? selectedArticulo.estrellas + 1
+                    : selectedArticulo.estrellas}{" "}
+                  estrellas
                 </span>
               </div>
 
@@ -708,20 +344,20 @@ export default function NovedadesTrading() {
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleLike(selectedNovedad.id, e as React.MouseEvent);
+                  handleLike(selectedArticulo.id, e as React.MouseEvent);
                 }}
                 className="flex items-center gap-2"
               >
-                <Heart
+                <Star
                   className={`h-4 w-4 ${
-                    likedItems.includes(selectedNovedad.id)
-                      ? "fill-red-500 text-red-500"
+                    likedItems.includes(selectedArticulo.id)
+                      ? "fill-custom-yellow text-custom-yellow hover:text-black"
                       : ""
                   }`}
                 />
-                {likedItems.includes(selectedNovedad.id)
-                  ? "Me gusta"
-                  : "Me gusta"}
+                {likedItems.includes(selectedArticulo.id)
+                  ? "Quitar estrella"
+                  : "Dar estrella"}
               </Button>
             </div>
           </DialogContent>

@@ -40,7 +40,7 @@ const Button = React.forwardRef<
     variant?: string;
     size?: string;
     className?: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
   }
 >(({ className, variant, size, onClick, ...props }, ref) => {

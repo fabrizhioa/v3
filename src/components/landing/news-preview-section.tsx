@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,20 +11,25 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   Calendar,
-  Heart,
+  Star,
   TrendingDown,
   TrendingUp,
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { novedadesTradingData } from "@/data/novedades-trading";
+import { Articulo } from "@/types/articulos";
 
-export default function NewsPreviewSection() {
-  // Obtener las 3 novedades más recientes
-  const latestNews = [...novedadesTradingData]
-    .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-    .slice(0, 3);
+interface NewsProps extends Articulo {
+  autor: {
+    nombre_completo: string;
+  };
+}
 
+export default function NewsPreviewSection({
+  articulos,
+}: {
+  articulos: NewsProps[];
+}) {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -66,7 +72,7 @@ export default function NewsPreviewSection() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {latestNews.map((novedad) => (
+          {articulos.map((novedad) => (
             <Card
               key={novedad.id}
               className="border hover:shadow-md transition-shadow"
@@ -80,11 +86,11 @@ export default function NewsPreviewSection() {
               <CardContent className="space-y-2">
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4 mr-1" />
-                  <span>{formatDate(novedad.fecha)}</span>
+                  <span>{formatDate(novedad.fecha.toISOString())}</span>
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <User className="h-4 w-4 mr-1" />
-                  <span>{novedad.autor}</span>
+                  <span>{novedad.autor.nombre_completo}</span>
                 </div>
                 {novedad.tendencia && (
                   <div className="flex items-center text-sm">
@@ -104,16 +110,16 @@ export default function NewsPreviewSection() {
                   </div>
                 )}
                 <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                  {novedad.resumen || novedad.contenido[0]?.content}
+                  {novedad.resumen ?? ""}
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between">
                 <div className="flex items-center text-sm text-muted-foreground">
-                  <Heart className="h-4 w-4 mr-1" />
-                  <span>{novedad.likes} likes</span>
+                  <Star className="h-4 w-4 mr-1" />
+                  <span>{novedad.estrellas} estrellas</span>
                 </div>
                 <Button size="sm">
-                  <Link href={`/novedades/${novedad.id}`}>Leer más</Link>
+                  <Link href={`/auth/login`}>Leer más</Link>
                 </Button>
               </CardFooter>
             </Card>

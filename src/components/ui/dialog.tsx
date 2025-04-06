@@ -63,6 +63,7 @@ export const Dialog: React.FC<DialogProps> = ({
   open,
   onOpenChange,
   footer,
+  className,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -91,7 +92,10 @@ export const Dialog: React.FC<DialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
       <div
         ref={dialogRef}
-        className="relative bg-card max-h-[90%] rounded-lg shadow-lg p-6 w-max max-w-screen-lg overflow"
+        className={cn(
+          "relative bg-card max-h-[90%] rounded-lg shadow-lg p-6 w-max max-w-screen-lg overflow",
+          className
+        )}
       >
         {children}
         <button
