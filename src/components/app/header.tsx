@@ -10,7 +10,7 @@ export default function Header() {
   const { auth } = useAuth();
 
   return (
-    <header className="h-max  md:order-first w-full hidden lg:flex transition-all duration-200 bg-darkslate items-center justify-between sticky top-0 left-0 z-50 shadow-md">
+    <header className="h-max  md:order-first w-full hidden lg:flex transition-all duration-200 bg-background border-b border-border items-center justify-between sticky top-0 left-0 z-50 ">
       <div className="container py-4 mx-auto flex items-center justify-between gap-4">
         <h1 className="flex items-start  gap-2 text-xl">
           <Link href="/" className="inline-block">
@@ -32,11 +32,11 @@ export default function Header() {
               <NavLink
                 link={link}
                 className="flex items-center gap-1 text-white hover:bg-black/40 py-0.5 px-2 text-xs rounded "
-                activeClassName="border hover:bg-primary/40 text-white"
+                activeClassName="hover:bg-primary/40 text-white"
                 key={index}
               >
-                {Icon && <Icon className="size-4 text-xs" strokeWidth={2} />}
                 <span>{title}</span>
+                {Icon && <Icon className="size-4 text-xs" strokeWidth={2} />}
               </NavLink>
             ))}
           </nav>
