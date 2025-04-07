@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { LogIn } from "lucide-react";
+import { LogIn, UserPlusIcon } from "lucide-react";
 // import { Button } from "../ui/button";
 // import { LogIn } from "lucide-react";
 
 export default function LandingHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex min-h-16 h-auto items-center flex-wrap gap-2 justify-between">
+      <div className="container flex min-h-16 py-2 h-auto items-center flex-wrap gap-2 justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-xl">
@@ -26,7 +26,8 @@ export default function LandingHeader() {
           </Button>
           <Button>
             <Link href="/auth/register" className="flex items-center">
-              Registrarse
+              <span className="hidden md:inline">Registrarse</span>
+              <UserPlusIcon className="md:hidden" />
             </Link>
           </Button>
         </div>
