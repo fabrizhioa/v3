@@ -7,59 +7,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// modelos usuario
-
-enum RolUsuario {
-  USUARIO
-  INSTRUCTOR
-  ADMIN
-  DESARROLLADOR
-}
-
-enum GeneroUsuario {
-  MASCULINO
-  FEMENINO
-  OTRO
-}
+//----- USUARIOS -----
 
 model usuario {
-  id                      String                       @id @default(uuid()) @db.Uuid
-  usuario                 String                       @unique(map: "nombre_usuario") @db.VarChar(16)
-  correo                  String                       @unique(map: "correo_usuario") @db.VarChar(255)
-  clave                   String
-  nombre_completo         String                       @db.VarChar(45)
-  pais                    String                       @db.VarChar(45)
-  fecha_nacimiento        String                       @db.VarChar(45)
-  fecha_creacion          DateTime?                    @default(now()) @db.Timestamp(6)
-  telefono                String?                      @db.VarChar(15)
-  genero                  GeneroUsuario
+  id                   String              @id @default(uuid()) @db.Uuid
+  usuario              String              @unique(map: "nombre_usuario") @db.VarChar(16)
+  correo               String              @unique(map: "correo_usuario") @db.VarChar(255)
+  clave                String
+  nombre_completo      String              @db.VarChar(45)
+  pais                 String              @db.VarChar(45)
+  fecha_nacimiento     String              @db.VarChar(45)
+  fecha_creacion       DateTime?           @default(now()) @db.Timestamp(6)
+  telefono             String?             @db.VarChar(15)
+  genero               GeneroUsuario
   // datos visuales
-  avatar                  String                       @default("/assets/images/default-user.png") @db.VarChar(200)
-  biografia               String?                      @default("Soy nuevo en mindsovermarket!!") @db.VarChar(900)
-  rol                     RolUsuario                   @default(USUARIO)
-  bloqueado               Boolean                      @default(false)
+  avatar               String              @default("/assets/images/default-user.png") @db.VarChar(200)
+  biografia            String?             @default("Soy nuevo en mindsovermarket!!") @db.VarChar(900)
+  rol                  RolUsuario          @default(USUARIO)
+  bloqueado            Boolean             @default(false)
   // redes sociales
-  facebook_url            String?
-  instagram_url           String?
-  twitter_url             String?
+  facebook_url         String?
+  instagram_url        String?
+  twitter_url          String?
   // membresia
-  membresia               String?                      @db.VarChar(45)
-  expiracion_membresia    DateTime?
+  membresia            String?             @db.VarChar(45)
+  expiracion_membresia DateTime?
   // otros datos
-  experiencia_total       Int                          @default(0)
+  experiencia_total    Int                 @default(0)
   // relaciones
-  conexiones_usuario      conexiones_usuario?
-  cursos_creados          curso[]
-  curso_elementos_likes   curso_elemento_likes[]
-  curso_progresos_usuario curso_progreso_usuario[]
-  curso_reconocimientos   curso_reconociento_usuario[]
-  seguidos                seguidores[]                 @relation("seguido_id")
-  seguidores              seguidores[]                 @relation("seguidor_id")
+  conexiones_usuario   conexiones_usuario?
+
+  curso_elementos_likes    curso_elemento_likes[]
+  curso_progresos_usuario  curso_progreso_usuario[]
+  curso_reconocimientos    curso_reconociento_usuario[]
+  seguidos                 seguidores[]                 @relation("seguido_id")
+  seguidores               seguidores[]                 @relation("seguidor_id")
   // otros
-  ventas                  ventas[]                     @relation("ventas_usuario")
-  compras                 ventas[]                     @relation("compras_usuario")
-  alertas                 alerta[]
-  articulos               articulo[]
+  ventas                   ventas[]                     @relation("ventas_usuario")
+  compras                  ventas[]                     @relation("compras_usuario")
+  // productos
+  cursos_creados           curso[]
+  articulos                articulo[]
+  paquetes_alertas_creados paquete_alertas[]
+  paquete_articulos        paquete_articulos[]
+  webinarios_creados       webinar[]
+  alerta                   alerta[]
 }
 
 model seguidores {
@@ -82,23 +74,15 @@ model conexiones_usuario {
   usuario    usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
-// modelos ventas
-
-enum tipoProducto {
-  noticias
-  cursos
-  alertas
-  webinar
-  membresia
-}
+//----- Ventas -----
 
 model ventas {
   id               String       @id @default(uuid()) @db.Uuid
   id_membresia     String?      @db.Uuid
   id_curso         String?      @db.Uuid
-  id_alerta        String?      @db.Uuid
+  id_alertas       String?      @db.Uuid
   id_webinar       String?      @db.Uuid
-  id_noticias      String?      @db.Uuid
+  id_articulos     String?      @db.Uuid
   tipo             tipoProducto
   precio           Decimal      @db.Money
   fecha            DateTime     @default(now()) @db.Timestamp(6)
@@ -107,13 +91,16 @@ model ventas {
   id_transaccion   String
   fecha_expiracion DateTime
 
-  comprador  usuario    @relation("compras_usuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador", onUpdate: Cascade)
-  vendedor   usuario    @relation("ventas_usuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor", onUpdate: Cascade)
-  cursos     curso?     @relation("ventas_cursos", fields: [id_curso], references: [id])
-  membresias membresia? @relation("ventas_membresia", fields: [id_membresia], references: [id])
+  comprador         usuario            @relation("compras_usuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador", onUpdate: Cascade)
+  vendedor          usuario            @relation("ventas_usuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor", onUpdate: Cascade)
+  curso             curso?             @relation("ventas_cursos", fields: [id_curso], references: [id])
+  membresias        membresia?         @relation("ventas_membresia", fields: [id_membresia], references: [id])
+  paquete_alertas   paquete_alertas?   @relation("ventas_paquete_alertas", fields: [id_alertas], references: [id])
+  paquete_articulos paquete_articulos? @relation("ventas_articulos", fields: [id_articulos], references: [id])
+  webinar           webinar?           @relation("ventas_webinar", fields: [id_webinar], references: [id])
 }
 
-// modelos suscripciones
+//----- Membresia -----
 
 model membresia {
   id               String   @id @default(uuid()) @db.Uuid
@@ -133,7 +120,7 @@ model membresia {
   @@index([id_creador], map: "id_creador_suscripcion")
 }
 
-// modelos cursos
+//----- cursos -----
 
 model curso {
   id                         String                       @id @default(uuid()) @db.Uuid
@@ -213,7 +200,121 @@ model curso_reconociento_usuario {
   @@index([id_usuario], map: "usuario_reconocimiento")
 }
 
-// Alertas
+//----- Alertas -----
+
+model paquete_alertas {
+  id             String   @id @default(uuid()) @db.Uuid
+  id_creador     String   @db.Uuid
+  titulo         String
+  descripcion    String
+  tags           String[]
+  ruta_imagen    String   @db.VarChar(200)
+  precio         Decimal  @db.Money
+  duracion       Int
+  disponibilidad Boolean  @default(true)
+  fecha_creacion DateTime @default(now()) @db.Timestamp(6)
+  stars          Int      @default(0)
+
+  creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ventas  ventas[] @relation("ventas_paquete_alertas")
+}
+
+model alerta {
+  id                String          @id @default(uuid()) @db.Uuid
+  id_creador        String          @db.Uuid
+  mercado           String
+  tipo              String // Assuming AlertType is a string, adjust if needed
+  precio            String
+  direccion         AlertDirection
+  descripcion       String
+  prioridad         AlertPriority
+  objetivos         String[]        @default([])
+  stop_loss         String?
+  timeframe         AlertTimeframe?
+  fecha_creacion    DateTime        @default(now())
+  fecha_publicacion DateTime?
+  publicada         Boolean         @default(false)
+
+  // relacion - usuario => alerta
+  creador usuario? @relation(fields: [id_creador], references: [id])
+}
+
+//----- Webinar -----
+
+model webinar {
+  id             String   @id @default(uuid()) @db.Uuid
+  id_creador     String   @db.Uuid
+  titulo         String
+  descripcion    String
+  resumen        String?
+  precio         Decimal  @db.Money
+  duracion       Int
+  disponibilidad Boolean  @default(true)
+  fecha_creacion DateTime @default(now()) @db.Timestamp(6)
+  fecha          DateTime
+  url_webinar    String
+  stars          Int      @default(0)
+  // relacion - webinar => ventas
+  ventas         ventas[] @relation("ventas_webinar")
+  // relacion - usuario => webinar
+  creador        usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+//----- Articulos -----
+
+model paquete_articulos {
+  id             String     @id @default(uuid()) @db.Uuid
+  id_creador     String     @db.Uuid
+  titulo         String
+  descripcion    String
+  resumen        String?
+  precio         Decimal    @db.Money
+  duracion       Int
+  disponibilidad Boolean    @default(true)
+  fecha_creacion DateTime   @default(now()) @db.Timestamp(6)
+  stars          Int        @default(0)
+  ventas         ventas[]   @relation("ventas_articulos")
+  // relacion - creador => paquete
+  creador        usuario    @relation(fields: [id_creador], references: [id])
+  // relacion - paquete => articulos
+  articulos      articulo[]
+}
+
+model articulo {
+  id         String              @id @default(uuid()) @db.Uuid
+  autor_id   String              @db.Uuid
+  titulo     String
+  fecha      DateTime            @db.Date
+  estrellas  Int
+  categoria  String
+  mercado    String
+  tendencia  TendenciaArticulo
+  resumen    String?
+  id_paquete String?
+  // relacion - paquete => articulos
+  paquete    paquete_articulos?  @relation(fields: [id], references: [id])
+  // relacion - articulo => contenido
+  contenido  articulo_elemento[]
+  // relacion - autor => articulo
+  autor      usuario             @relation(fields: [autor_id], references: [id])
+}
+
+model articulo_elemento {
+  id          String                 @id @default(uuid()) @db.Uuid
+  content     String
+  src         String?
+  alt         String?
+  level       Int?
+  items       String[]
+  // tipo elemento
+  type        tipo_elemento_articulo
+  // relacion
+  articulo    articulo               @relation(fields: [articulo_id], references: [id])
+  articulo_id String                 @db.Uuid
+  position    Int?
+}
+
+//----- Enums Alertas -----
 
 enum AlertDirection {
   bullish
@@ -237,48 +338,12 @@ enum AlertTimeframe {
   weeks_1
 }
 
-model alerta {
-  id                String          @id @default(uuid())
-  id_creador        String          @db.Uuid
-  mercado           String
-  tipo              String // Assuming AlertType is a string, adjust if needed
-  precio            String
-  direccion         AlertDirection
-  descripcion       String
-  prioridad         AlertPriority
-  objetivos         String[]        @default([])
-  stop_loss         String?
-  timeframe         AlertTimeframe?
-  fecha_creacion    DateTime        @default(now())
-  fecha_publicacion DateTime?
-  publicada         Boolean         @default(false)
-  creador           usuario?        @relation(fields: [id_creador], references: [id])
-}
-
-// ARTICULO
+//----- Enums Articulos -----
 
 enum TendenciaArticulo {
   alcista
   bajista
   neutral
-}
-
-model articulo {
-  id        String            @id @default(uuid()) @db.Uuid
-  titulo    String
-  fecha     DateTime          @db.Date
-  estrellas Int
-  categoria String
-  mercado   String
-  tendencia TendenciaArticulo
-  resumen   String?
-
-  // relacion contenido - articulo
-  contenido articulo_elemento[]
-
-  // relacion autor - articulo
-  autor    usuario @relation(fields: [autor_id], references: [id])
-  autor_id String  @db.Uuid
 }
 
 enum tipo_elemento_articulo {
@@ -290,17 +355,27 @@ enum tipo_elemento_articulo {
   list
 }
 
-model articulo_elemento {
-  id          String                 @id @default(uuid()) @db.Uuid
-  content     String
-  src         String?
-  alt         String?
-  level       Int?
-  items       String[]
-  // tipo elemento
-  type        tipo_elemento_articulo
-  // relacion
-  articulo    articulo               @relation(fields: [articulo_id], references: [id])
-  articulo_id String                 @db.Uuid
-  position    Int?
+//----- Enums Ventas -----
+
+enum tipoProducto {
+  noticias
+  cursos
+  alertas
+  webinar
+  membresia
+}
+
+//----- Enums Usuarios -----
+
+enum RolUsuario {
+  USUARIO
+  INSTRUCTOR
+  ADMIN
+  DESARROLLADOR
+}
+
+enum GeneroUsuario {
+  MASCULINO
+  FEMENINO
+  OTRO
 }
