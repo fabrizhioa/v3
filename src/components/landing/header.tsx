@@ -7,7 +7,7 @@ import { LogIn } from "lucide-react";
 export default function LandingHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center flex-wrap justify-between">
+      <div className="container flex min-h-16 h-auto items-center flex-wrap gap-2 justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-xl">

@@ -11,8 +11,8 @@ export default function Header() {
 
   return (
     <header className="h-max  md:order-first w-full hidden lg:flex transition-all duration-200 bg-background border-b border-border items-center justify-between sticky top-0 left-0 z-50 ">
-      <div className="container py-4 mx-auto flex flex-wrap items-center justify-between gap-4">
-        <h1 className="flex items-start  gap-2 text-xl min-w-max">
+      <div className="container py-4 mx-auto flex items-center justify-between gap-4">
+        <h1 className="flex items-start  gap-2 text-xl">
           <Link href="/" className="inline-block">
             <span className="text-2xl font-bold">
               <span className="text-primary">Minds</span>
