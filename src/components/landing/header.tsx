@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { LogIn, UserPlusIcon } from "lucide-react";
 // import { Button } from "../ui/button";
 // import { LogIn } from "lucide-react";
@@ -18,18 +18,21 @@ export default function LandingHeader() {
           </Link>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Link href="/auth/login" className="flex items-center ">
-              <span className="hidden md:inline">Iniciar sesión</span>
-              <LogIn className="md:hidden" />
-            </Link>
-          </Button>
-          <Button>
-            <Link href="/auth/register" className="flex items-center">
-              <span className="hidden md:inline">Registrarse</span>
-              <UserPlusIcon className="md:hidden" />
-            </Link>
-          </Button>
+          <Link
+            href="/auth/login"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            <span className="hidden md:inline">Iniciar sesión</span>
+            <LogIn className="md:hidden" />
+          </Link>
+
+          <Link
+            href="/auth/register"
+            className={buttonVariants({ variant: "default" })}
+          >
+            <span className="hidden md:inline">Registrarse</span>
+            <UserPlusIcon className="md:hidden" />
+          </Link>
         </div>
       </div>
     </header>

@@ -20,9 +20,9 @@ interface ArticulosLandingProps extends Articulo {
 }
 
 export default function Home() {
-  const [cursos, setCursos] = useState([]);
-  const [alertas, setAlertas] = useState([]);
-  const [lives, setLives] = useState([]);
+  const [cursos, setCursos] = useState<unknown[]>([]);
+  const [alertas, setAlertas] = useState<unknown[]>([]);
+  const [lives, setLives] = useState<unknown[]>([]);
   const [articulos, setArticulos] = useState<ArticulosLandingProps[]>([]);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function Home() {
     };
 
     fetchData();
-  });
+  }, []);
   return (
     <>
       <LandingHeader />

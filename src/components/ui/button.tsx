@@ -5,8 +5,14 @@ const buttonVariants = ({
   size = "default",
   className = "",
 }: {
-  variant?: string;
-  size?: string;
+  variant?:
+    | "secondary"
+    | "ghost"
+    | "link"
+    | "outline"
+    | "destructive"
+    | "default";
+  size?: "sm" | "lg" | "icon" | "default";
   className?: string;
 }) =>
   cn(
@@ -37,8 +43,14 @@ const Button = React.forwardRef<
   {
     disabled?: boolean;
     type?: "button" | "reset" | "submit";
-    variant?: string;
-    size?: string;
+    variant?:
+      | "secondary"
+      | "ghost"
+      | "link"
+      | "outline"
+      | "destructive"
+      | "default";
+    size?: "sm" | "lg" | "icon" | "default";
     className?: string;
     children?: React.ReactNode;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
