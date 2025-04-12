@@ -13,7 +13,7 @@ export default function Menu() {
   };
 
   return (
-    <div className="flex items-center justify-center p-2 lg:hidden">
+    <div className="flex items-center justify-center p-2 lg:hidden sticky bottom-0 left-0 border-t">
       <menu className="flex items-center px-4 py-3 gap-6 justify-center bg-darkslate rounded-full">
         <Image
           priority

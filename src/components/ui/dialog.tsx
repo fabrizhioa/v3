@@ -29,7 +29,7 @@ export interface DialogContentProps {
 
 export const DialogHeader: React.FC<DialogHeaderProps> = ({ children }) => {
   return (
-    <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+    <div className="flex flex-col bg-card space-y-1.5 text-center sm:text-left">
       {children}
     </div>
   );

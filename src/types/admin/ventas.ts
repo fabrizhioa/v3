@@ -1,8 +1,7 @@
 import { $Enums } from "@prisma/client";
 
-export type ProductosVentas = {
+export type ProductoVentasProps = {
   id: string;
-  nombre: string;
   comprador: {
     id: string;
     nombre_completo: string;
@@ -11,7 +10,22 @@ export type ProductosVentas = {
     id: string;
     nombre_completo: string;
   };
+  producto: {
+    id: string;
+    titulo: string;
+  };
   precio: number;
   fecha: Date;
   tipo: $Enums.tipoProducto;
 };
+
+export interface ObtenerVentasProps {
+  datos: {
+    cursos: ProductoVentasProps[];
+    paquetes_alertas: ProductoVentasProps[];
+    paquetes_articulos: ProductoVentasProps[];
+    membresias: ProductoVentasProps[];
+    webinarios: ProductoVentasProps[];
+  };
+  error: string | false;
+}

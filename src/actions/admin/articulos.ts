@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { Articulo } from "@/types/articulos";
+import { Decimal } from "@prisma/client/runtime/client";
 
 export async function obtenerArticulo(id: string) {
   const articulo = await prisma.articulo
@@ -170,4 +171,30 @@ export async function actualizarArticulo(
   });
 
   return { success: true, error: null };
+}
+
+export async function obtenerPaquetesArticulos(): Promise<
+  {
+    id: string;
+    titulo: string;
+    estrellas: number;
+    categoria: string;
+    mercado: string;
+    precio: Decimal;
+    fecha_creacion: Date;
+  }[]
+> {
+  const paquetes = await prisma.paquete_articulos.findMany({
+    select: {
+      categoria: true,
+      id: true,
+      estrellas: true,
+      fecha_creacion: true,
+      mercado: true,
+      titulo: true,
+      precio: true,
+    },
+  });
+
+  return paquetes;
 }

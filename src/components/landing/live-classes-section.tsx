@@ -9,7 +9,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, Clock, Users } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function LiveClassesSection() {
   const upcomingClasses = [
@@ -64,18 +63,8 @@ export default function LiveClassesSection() {
               key={liveClass.id}
               className="overflow-hidden border hover:shadow-md transition-shadow"
             >
-              <div className="aspect-video relative">
-                <Badge className="absolute top-3 right-3 z-10">
-                  {liveClass.status}
-                </Badge>
-                <Image
-                  src={liveClass.image || "/placeholder.svg"}
-                  alt={liveClass.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
               <CardHeader>
+                <Badge className="w-max">{liveClass.status}</Badge>
                 <CardTitle>{liveClass.title}</CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Por {liveClass.instructor}

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useAuth } from "@/components/contexts/auth/context";
 import { NAV_LINKS } from "@/lib/navlink";
-import { Rocket } from "lucide-react";
+import { Rocket, ShieldUserIcon } from "lucide-react";
 import Image from "next/image";
 import NavLink from "./navlink";
 import Link from "next/link";
@@ -39,6 +39,16 @@ export default function Header() {
                 {Icon && <Icon className="size-4 text-xs" strokeWidth={2} />}
               </NavLink>
             ))}
+            {(auth?.rol === "ADMIN" || auth?.rol === "DESARROLLADOR") && (
+              <NavLink
+                link="/app/admin"
+                className="flex items-center gap-1 text-white hover:bg-black/40 py-0.5 px-2 text-xs rounded "
+                activeClassName="hover:bg-primary/40 text-white"
+              >
+                <span>Administrar</span>
+                <ShieldUserIcon className="size-4 text-xs" strokeWidth={2} />
+              </NavLink>
+            )}
           </nav>
           <div className="flex items-center  justify-center gap-2">
             <Image

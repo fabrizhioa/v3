@@ -9,11 +9,12 @@ interface NavLinkProps {
   className?: string;
   activeClassName?: string;
   inactiveClassName?: string;
+  end?: boolean;
 }
 
 export default function NavLink({
   link,
-
+  end = false,
   className,
   activeClassName,
   inactiveClassName,
@@ -22,7 +23,7 @@ export default function NavLink({
   "use client";
 
   const path = usePathname();
-  const isActive = path === link;
+  const isActive = end ? path === link : path.startsWith(link);
 
   return (
     <Link

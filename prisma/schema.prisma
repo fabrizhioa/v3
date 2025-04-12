@@ -114,7 +114,7 @@ model membresia {
   ruta_aprendizaje String[]
   disponibilidad   Boolean  @default(true)
   fecha_creacion   DateTime @default(now()) @db.Timestamp(6)
-  stars            Int      @default(0)
+  estrellas        Int      @default(0)
   ventas           ventas[] @relation("ventas_membresia")
 
   @@index([id_creador], map: "id_creador_suscripcion")
@@ -213,7 +213,7 @@ model paquete_alertas {
   duracion       Int
   disponibilidad Boolean  @default(true)
   fecha_creacion DateTime @default(now()) @db.Timestamp(6)
-  stars          Int      @default(0)
+  estrellas      Int      @default(0)
 
   creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ventas  ventas[] @relation("ventas_paquete_alertas")
@@ -253,7 +253,7 @@ model webinar {
   fecha_creacion DateTime @default(now()) @db.Timestamp(6)
   fecha          DateTime
   url_webinar    String
-  stars          Int      @default(0)
+  estrellas      Int      @default(0)
   // relacion - webinar => ventas
   ventas         ventas[] @relation("ventas_webinar")
   // relacion - usuario => webinar
@@ -269,10 +269,11 @@ model paquete_articulos {
   descripcion    String
   resumen        String?
   precio         Decimal    @db.Money
-  duracion       Int
+  categoria      String
+  mercado        String
   disponibilidad Boolean    @default(true)
   fecha_creacion DateTime   @default(now()) @db.Timestamp(6)
-  stars          Int        @default(0)
+  estrellas      Int        @default(0)
   ventas         ventas[]   @relation("ventas_articulos")
   // relacion - creador => paquete
   creador        usuario    @relation(fields: [id_creador], references: [id])
@@ -358,7 +359,7 @@ enum tipo_elemento_articulo {
 //----- Enums Ventas -----
 
 enum tipoProducto {
-  noticias
+  articulo
   cursos
   alertas
   webinar
