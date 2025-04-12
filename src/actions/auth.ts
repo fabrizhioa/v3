@@ -31,19 +31,28 @@ export async function registro(
     pais,
     fecha_nacimiento,
     genero,
+    referente_user,
   } = datosFormulario;
 
-  const usuario_registrado = await prisma.usuario.count({ where: {
-    usuario: usuario
-  }})
+  const usuario_registrado = await prisma.usuario.count({
+    where: {
+      usuario: usuario,
+    },
+  });
 
-  if(usuario_registrado > 0) return { error: "El usuario ingresado ya se encuentra registrado"};
+  if (usuario_registrado > 0)
+    return { error: "El usuario ingresado ya se encuentra registrado" };
 
-  const correo_registrado = await prisma.usuario.count({ where: {
-    correo: correo
-  }})
+  const correo_registrado = await prisma.usuario.count({
+    where: {
+      correo: correo,
+    },
+  });
 
-  if(correo_registrado > 0) return { error: "El correo electrónico ingresado ya se encuentra registrado"};
+  if (correo_registrado > 0)
+    return {
+      error: "El correo electrónico ingresado ya se encuentra registrado",
+    };
 
   const clave_hash = await hash(clave);
   const registro_usuario = await prisma.usuario.create({
@@ -55,17 +64,17 @@ export async function registro(
       pais,
       fecha_nacimiento,
       genero,
+      referente_user: referente_user !== "" ? referente_user : null,
     },
   });
 
-  if(registro_usuario !== null) {
+  if (registro_usuario !== null) {
     return {
-      success: "Registro exitoso"
-    }
-  }else{
-    return { error: "Error al registrar al usuario"}
+      success: "Registro exitoso",
+    };
+  } else {
+    return { error: "Error al registrar al usuario" };
   }
-  
 }
 
 export async function ingreso({
@@ -94,7 +103,7 @@ export async function ingreso({
       membresia: true,
       expiracion_membresia: true,
       clave: true,
-    }
+    },
   });
 
   if (!consulta) return { error: "El usuario no existe" };
@@ -103,7 +112,8 @@ export async function ingreso({
 
   const { clave: clave_original, bloqueado, ...datos } = consulta;
 
-  if (bloqueado) return { error: "El usuario se encuentra bloqueado, contacta con soporte"}
+  if (bloqueado)
+    return { error: "El usuario se encuentra bloqueado, contacta con soporte" };
 
   if (clave_original !== clave_hash)
     return { error: "La clave ingresada es incorrecta" };
@@ -176,7 +186,9 @@ export async function verificarToken(token: string): Promise<boolean> {
   return false;
 }
 
-export async function validarConexionUsuario(token: string) : Promise<UserData | false>{
+export async function validarConexionUsuario(
+  token: string
+): Promise<UserData | false> {
   const query = await prisma.conexiones_usuario.findFirst({
     select: {
       usuario: {
@@ -202,7 +214,7 @@ export async function validarConexionUsuario(token: string) : Promise<UserData |
   if (!query) return false;
 
   const { bloqueado, ...data } = query.usuario;
-  
+
   if (bloqueado) return false;
 
   return data;

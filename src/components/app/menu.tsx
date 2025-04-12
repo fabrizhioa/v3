@@ -23,12 +23,13 @@ export default function Menu() {
           height={24}
         />
 
-        {NAV_LINKS.map(({ link, icon: Icon }, index) => (
+        {NAV_LINKS.map(({ link, icon: Icon, end }, index) => (
           <NavLink
             link={link}
             key={index}
-            className="p-1.5 transition-all  rounded-full flex items-center justify-center"
-            activeClassName="bg-primary"
+            className="p-1.5 transition-all flex items-center justify-center"
+            activeClassName="text-primary"
+            end={end}
           >
             {Icon && <Icon strokeWidth={1.5} className="size-6" />}
           </NavLink>

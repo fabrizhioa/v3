@@ -7,51 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//----- USUARIOS -----
-
 model usuario {
-  id                   String              @id @default(uuid()) @db.Uuid
-  usuario              String              @unique(map: "nombre_usuario") @db.VarChar(16)
-  correo               String              @unique(map: "correo_usuario") @db.VarChar(255)
-  clave                String
-  nombre_completo      String              @db.VarChar(45)
-  pais                 String              @db.VarChar(45)
-  fecha_nacimiento     String              @db.VarChar(45)
-  fecha_creacion       DateTime?           @default(now()) @db.Timestamp(6)
-  telefono             String?             @db.VarChar(15)
-  genero               GeneroUsuario
-  // datos visuales
-  avatar               String              @default("/assets/images/default-user.png") @db.VarChar(200)
-  biografia            String?             @default("Soy nuevo en mindsovermarket!!") @db.VarChar(900)
-  rol                  RolUsuario          @default(USUARIO)
-  bloqueado            Boolean             @default(false)
-  // redes sociales
-  facebook_url         String?
-  instagram_url        String?
-  twitter_url          String?
-  // membresia
-  membresia            String?             @db.VarChar(45)
-  expiracion_membresia DateTime?
-  // otros datos
-  experiencia_total    Int                 @default(0)
-  // relaciones
-  conexiones_usuario   conexiones_usuario?
-
+  id                       String                       @id @default(uuid()) @db.Uuid
+  usuario                  String                       @unique(map: "nombre_usuario") @db.VarChar(16)
+  correo                   String                       @unique(map: "correo_usuario") @db.VarChar(255)
+  clave                    String
+  nombre_completo          String                       @db.VarChar(45)
+  pais                     String                       @db.VarChar(45)
+  fecha_creacion           DateTime                     @default(now()) @db.Date
+  telefono                 String?                      @db.VarChar(15)
+  genero                   GeneroUsuario
+  avatar                   String                       @default("/assets/images/default-user.png") @db.VarChar(200)
+  biografia                String?                      @default("Soy nuevo en mindsovermarket!!") @db.VarChar(900)
+  rol                      RolUsuario                   @default(USUARIO)
+  bloqueado                Boolean                      @default(false)
+  facebook_url             String?
+  instagram_url            String?
+  twitter_url              String?
+  membresia                String?                      @db.VarChar(45)
+  expiracion_membresia     DateTime?
+  experiencia_total        Int                          @default(0)
+  fecha_nacimiento         DateTime                     @db.Date
+  alerta                   alerta[]
+  articulos                articulo[]
+  conexiones_usuario       conexiones_usuario?
+  cursos_creados           curso[]
   curso_elementos_likes    curso_elemento_likes[]
   curso_progresos_usuario  curso_progreso_usuario[]
   curso_reconocimientos    curso_reconociento_usuario[]
-  seguidos                 seguidores[]                 @relation("seguido_id")
-  seguidores               seguidores[]                 @relation("seguidor_id")
-  // otros
-  ventas                   ventas[]                     @relation("ventas_usuario")
-  compras                  ventas[]                     @relation("compras_usuario")
-  // productos
-  cursos_creados           curso[]
-  articulos                articulo[]
   paquetes_alertas_creados paquete_alertas[]
   paquete_articulos        paquete_articulos[]
+  seguidos                 seguidores[]                 @relation("seguido_id")
+  seguidores               seguidores[]                 @relation("seguidor_id")
+  referente_user           String?                      @db.VarChar(16)
+  referente                usuario?                     @relation("referral", fields: [referente_user], references: [usuario])
+  referidos                usuario[]                    @relation("referral")
+  compras                  ventas[]                     @relation("compras_usuario")
+  ventas                   ventas[]                     @relation("ventas_usuario")
   webinarios_creados       webinar[]
-  alerta                   alerta[]
 }
 
 model seguidores {
@@ -59,11 +52,9 @@ model seguidores {
   seguidor_id String   @db.Uuid
   seguido_id  String   @db.Uuid
   fecha       DateTime @default(now()) @db.Date
-  //relacion
-  seguidor    usuario  @relation("seguidor_id", fields: [seguidor_id], references: [id], onDelete: Cascade)
   seguido     usuario  @relation("seguido_id", fields: [seguido_id], references: [id], onDelete: Cascade)
+  seguidor    usuario  @relation("seguidor_id", fields: [seguidor_id], references: [id], onDelete: Cascade)
 
-  //indices
   @@index([seguidor_id, seguido_id], map: "seguidor_id_seguido_id")
 }
 
@@ -74,33 +65,28 @@ model conexiones_usuario {
   usuario    usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
-//----- Ventas -----
-
 model ventas {
-  id               String       @id @default(uuid()) @db.Uuid
-  id_membresia     String?      @db.Uuid
-  id_curso         String?      @db.Uuid
-  id_alertas       String?      @db.Uuid
-  id_webinar       String?      @db.Uuid
-  id_articulos     String?      @db.Uuid
-  tipo             tipoProducto
-  precio           Decimal      @db.Money
-  fecha            DateTime     @default(now()) @db.Timestamp(6)
-  id_comprador     String       @db.Uuid
-  id_vendedor      String       @db.Uuid
-  id_transaccion   String
-  fecha_expiracion DateTime
-
-  comprador         usuario            @relation("compras_usuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador", onUpdate: Cascade)
-  vendedor          usuario            @relation("ventas_usuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor", onUpdate: Cascade)
-  curso             curso?             @relation("ventas_cursos", fields: [id_curso], references: [id])
-  membresias        membresia?         @relation("ventas_membresia", fields: [id_membresia], references: [id])
+  id                String             @id @default(uuid()) @db.Uuid
+  id_membresia      String?            @db.Uuid
+  id_curso          String?            @db.Uuid
+  id_alertas        String?            @db.Uuid
+  id_webinar        String?            @db.Uuid
+  id_articulos      String?            @db.Uuid
+  tipo              tipoProducto
+  precio            Decimal            @db.Money
+  fecha             DateTime           @default(now()) @db.Timestamp(6)
+  id_comprador      String             @db.Uuid
+  id_vendedor       String             @db.Uuid
+  id_transaccion    String
+  fecha_expiracion  DateTime
+  comprador         usuario            @relation("compras_usuario", fields: [id_comprador], references: [id], onDelete: Cascade, map: "relacion_comprador")
+  vendedor          usuario            @relation("ventas_usuario", fields: [id_vendedor], references: [id], onDelete: Cascade, map: "relacion_vendedor")
   paquete_alertas   paquete_alertas?   @relation("ventas_paquete_alertas", fields: [id_alertas], references: [id])
   paquete_articulos paquete_articulos? @relation("ventas_articulos", fields: [id_articulos], references: [id])
+  curso             curso?             @relation("ventas_cursos", fields: [id_curso], references: [id])
+  membresias        membresia?         @relation("ventas_membresia", fields: [id_membresia], references: [id])
   webinar           webinar?           @relation("ventas_webinar", fields: [id_webinar], references: [id])
 }
-
-//----- Membresia -----
 
 model membresia {
   id               String   @id @default(uuid()) @db.Uuid
@@ -120,8 +106,6 @@ model membresia {
   @@index([id_creador], map: "id_creador_suscripcion")
 }
 
-//----- cursos -----
-
 model curso {
   id                         String                       @id @default(uuid()) @db.Uuid
   id_creador                 String                       @db.Uuid
@@ -134,36 +118,32 @@ model curso {
   duracion                   Int
   ruta_aprendizaje           String[]
   likes                      Int                          @default(0)
+  creador                    usuario                      @relation(fields: [id_creador], references: [id], onDelete: Cascade)
   curso_elementos            curso_elemento[]
   curso_progreso_usuario     curso_progreso_usuario[]
   curso_reconociento_usuario curso_reconociento_usuario[]
-
-  ventas  ventas[] @relation("ventas_cursos")
-  creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ventas                     ventas[]                     @relation("ventas_cursos")
 
   @@index([id_creador], map: "cursos_creados")
 }
 
 model curso_elemento {
-  id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   titulo            String
-  descripcion       String  @db.VarChar(900)
+  descripcion       String                   @db.VarChar(900)
   ruta              String?
   tipo              String
   valor_experiencia Int
-  curso_id          String  @db.Uuid
-
-  likes    curso_elemento_likes[]
-  progreso curso_progreso_usuario[]
-
-  curso curso @relation(fields: [curso_id], references: [id], onDelete: Cascade, map: "relacion_curso", onUpdate: Cascade)
+  curso_id          String                   @db.Uuid
+  curso             curso                    @relation(fields: [curso_id], references: [id], onDelete: Cascade, map: "relacion_curso")
+  likes             curso_elemento_likes[]
+  progreso          curso_progreso_usuario[]
 }
 
 model curso_elemento_likes {
-  id          String @id @default(uuid()) @db.Uuid
-  id_usuario  String @db.Uuid
-  id_elemento String @db.Uuid
-
+  id             String         @id @default(uuid()) @db.Uuid
+  id_usuario     String         @db.Uuid
+  id_elemento    String         @db.Uuid
   curso_elemento curso_elemento @relation(fields: [id_elemento], references: [id], onDelete: Cascade, map: "relacion_elemento")
   usuario        usuario        @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_user")
 
@@ -172,12 +152,11 @@ model curso_elemento_likes {
 }
 
 model curso_progreso_usuario {
-  id          String   @id @default(uuid()) @db.Uuid
-  id_curso    String   @db.Uuid
-  id_usuario  String   @db.Uuid
-  id_elemento String   @db.Uuid
-  date        DateTime @default(now())
-
+  id             String         @id @default(uuid()) @db.Uuid
+  id_curso       String         @db.Uuid
+  id_usuario     String         @db.Uuid
+  id_elemento    String         @db.Uuid
+  date           DateTime       @default(now())
   curso          curso          @relation(fields: [id_curso], references: [id], onDelete: Cascade, map: "relacion_curso")
   curso_elemento curso_elemento @relation(fields: [id_elemento], references: [id], onDelete: Cascade, map: "relacion_elemento")
   usuario        usuario        @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_usuario")
@@ -191,16 +170,13 @@ model curso_reconociento_usuario {
   id         String   @id @default(uuid()) @db.Uuid
   id_curso   String   @db.Uuid
   id_usuario String   @db.Uuid
-  date       DateTime @default(now())
-
-  curso   curso   @relation(fields: [id_curso], references: [id], onDelete: Cascade, map: "relacion_curso")
-  usuario usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_usuario")
+  date       DateTime @default(now()) @db.Date
+  curso      curso    @relation(fields: [id_curso], references: [id], onDelete: Cascade, map: "relacion_curso")
+  usuario    usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "relacion_usuario")
 
   @@index([id_curso], map: "curso_reconocimiento")
   @@index([id_usuario], map: "usuario_reconocimiento")
 }
-
-//----- Alertas -----
 
 model paquete_alertas {
   id             String   @id @default(uuid()) @db.Uuid
@@ -214,16 +190,15 @@ model paquete_alertas {
   disponibilidad Boolean  @default(true)
   fecha_creacion DateTime @default(now()) @db.Timestamp(6)
   estrellas      Int      @default(0)
-
-  creador usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ventas  ventas[] @relation("ventas_paquete_alertas")
+  creador        usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade)
+  ventas         ventas[] @relation("ventas_paquete_alertas")
 }
 
 model alerta {
   id                String          @id @default(uuid()) @db.Uuid
   id_creador        String          @db.Uuid
   mercado           String
-  tipo              String // Assuming AlertType is a string, adjust if needed
+  tipo              String
   precio            String
   direccion         AlertDirection
   descripcion       String
@@ -234,12 +209,8 @@ model alerta {
   fecha_creacion    DateTime        @default(now())
   fecha_publicacion DateTime?
   publicada         Boolean         @default(false)
-
-  // relacion - usuario => alerta
-  creador usuario? @relation(fields: [id_creador], references: [id])
+  creador           usuario         @relation(fields: [id_creador], references: [id])
 }
-
-//----- Webinar -----
 
 model webinar {
   id             String   @id @default(uuid()) @db.Uuid
@@ -254,31 +225,25 @@ model webinar {
   fecha          DateTime
   url_webinar    String
   estrellas      Int      @default(0)
-  // relacion - webinar => ventas
   ventas         ventas[] @relation("ventas_webinar")
-  // relacion - usuario => webinar
-  creador        usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creador        usuario  @relation(fields: [id_creador], references: [id], onDelete: Cascade)
 }
 
-//----- Articulos -----
-
 model paquete_articulos {
-  id             String     @id @default(uuid()) @db.Uuid
-  id_creador     String     @db.Uuid
+  id             String    @id @default(uuid()) @db.Uuid
+  id_creador     String    @db.Uuid
   titulo         String
   descripcion    String
   resumen        String?
-  precio         Decimal    @db.Money
+  precio         Decimal   @db.Money
+  disponibilidad Boolean   @default(true)
+  fecha_creacion DateTime  @default(now()) @db.Timestamp(6)
   categoria      String
   mercado        String
-  disponibilidad Boolean    @default(true)
-  fecha_creacion DateTime   @default(now()) @db.Timestamp(6)
-  estrellas      Int        @default(0)
-  ventas         ventas[]   @relation("ventas_articulos")
-  // relacion - creador => paquete
-  creador        usuario    @relation(fields: [id_creador], references: [id])
-  // relacion - paquete => articulos
-  articulos      articulo[]
+  estrellas      Int       @default(0)
+  articulos      articulo?
+  creador        usuario   @relation(fields: [id_creador], references: [id])
+  ventas         ventas[]  @relation("ventas_articulos")
 }
 
 model articulo {
@@ -292,12 +257,9 @@ model articulo {
   tendencia  TendenciaArticulo
   resumen    String?
   id_paquete String?
-  // relacion - paquete => articulos
-  paquete    paquete_articulos?  @relation(fields: [id], references: [id])
-  // relacion - articulo => contenido
-  contenido  articulo_elemento[]
-  // relacion - autor => articulo
   autor      usuario             @relation(fields: [autor_id], references: [id])
+  paquete    paquete_articulos   @relation(fields: [id], references: [id])
+  contenido  articulo_elemento[]
 }
 
 model articulo_elemento {
@@ -307,15 +269,11 @@ model articulo_elemento {
   alt         String?
   level       Int?
   items       String[]
-  // tipo elemento
   type        tipo_elemento_articulo
-  // relacion
-  articulo    articulo               @relation(fields: [articulo_id], references: [id])
   articulo_id String                 @db.Uuid
   position    Int?
+  articulo    articulo               @relation(fields: [articulo_id], references: [id])
 }
-
-//----- Enums Alertas -----
 
 enum AlertDirection {
   bullish
@@ -339,8 +297,6 @@ enum AlertTimeframe {
   weeks_1
 }
 
-//----- Enums Articulos -----
-
 enum TendenciaArticulo {
   alcista
   bajista
@@ -356,8 +312,6 @@ enum tipo_elemento_articulo {
   list
 }
 
-//----- Enums Ventas -----
-
 enum tipoProducto {
   articulo
   cursos
@@ -365,8 +319,6 @@ enum tipoProducto {
   webinar
   membresia
 }
-
-//----- Enums Usuarios -----
 
 enum RolUsuario {
   USUARIO

@@ -33,8 +33,6 @@ const Select = ({
   const selectRef = React.useRef<HTMLDivElement>(null);
   const listRef = React.useRef<HTMLUListElement>(null);
 
-  console.log(defaultValue);
-
   React.useEffect(() => {
     setSelectedOption(value || "");
   }, [value]);

@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 
@@ -36,6 +36,8 @@ const calculatePasswordStrength = (password: string) => {
 export function RegisterForm() {
   const { addToast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rf = searchParams.get("rf");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -51,6 +53,7 @@ export function RegisterForm() {
     fecha_nacimiento: new Date(),
     terminos: false,
     genero: "",
+    referente: rf ?? "",
   });
 
   const paises = [
@@ -226,19 +229,15 @@ export function RegisterForm() {
     }
 
     setIsLoading(true);
-
     const consulta = await registro({
       usuario: formData.usuario,
       correo: formData.correo,
       clave: formData.clave,
       nombre_completo: formData.nombre_completo,
       pais: formData.pais,
-      fecha_nacimiento: formData.fecha_nacimiento.toLocaleDateString("es-MX", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }),
+      fecha_nacimiento: new Date(formData.fecha_nacimiento),
       genero: formData.genero as "MASCULINO" | "FEMENINO" | "OTRO",
+      referente_user: formData.referente ?? null,
     });
 
     if (consulta.success) {
@@ -367,9 +366,7 @@ export function RegisterForm() {
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             value={
               formData.fecha_nacimiento
-                ? new Date(formData.fecha_nacimiento)
-                    .toISOString()
-                    .split("T")[0]
+                ? formData.fecha_nacimiento.toISOString().split("T")[0]
                 : ""
             }
             onChange={(e) => {

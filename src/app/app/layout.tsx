@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <>
       <div className="h-dvh grid grid-rows-[auto_max-content] lg:flex lg:flex-col lg:h-auto lg:min-h-dvh">
         <Header />
-        <main className="min-h-full flex-1 grid mx-auto w-full overflow-scroll">
+        <main className="min-h-full flex-1 grid mx-auto w-full overflow-y-auto">
           {children}
         </main>
 

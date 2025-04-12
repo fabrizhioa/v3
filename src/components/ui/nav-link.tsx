@@ -9,6 +9,7 @@ export const NavLink = ({
   Icon,
   href,
   end,
+  className,
 }: {
   children: React.ReactNode;
   href: string;
@@ -16,16 +17,17 @@ export const NavLink = ({
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
   end?: boolean;
+  className?: string;
 }) => {
   const path = usePathname();
-  const isActive = end ? path === href : path.includes(href);
+  const isActive = end ? path === href : path.startsWith(href);
 
   return (
     <Link
       href={href}
       className={`border rounded-lg py-1.5 px-2 ${
-        isActive ? "bg-card text-card-foreground" : "text-white"
-      }`}
+        isActive ? "bg- text-card-foreground" : "text-white"
+      } ${className}`}
     >
       <div className="flex items-center gap-2 justify-between">
         {Icon && (
@@ -34,13 +36,13 @@ export const NavLink = ({
             size={16}
             className={
               isActive
-                ? "fill-primary text-transparent"
-                : "fill-transparent text-white"
+                ? "fill-primary text-transparent size-5"
+                : "fill-transparent text-white size-5"
             }
           />
         )}
         {children}
-        <ArrowRight className="w-4 h-4" />
+        <ArrowRight className="w-4 h-4 size-4" />
       </div>
     </Link>
   );

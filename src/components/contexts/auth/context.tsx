@@ -17,7 +17,7 @@ const AuthReducer = (state: UserData | null, action: AuthAction) => {
       return {
         ...state,
         ...action.payload,
-      };
+      } as UserData;
     default:
       return state;
   }
