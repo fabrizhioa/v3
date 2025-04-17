@@ -9,8 +9,6 @@ import { redirect } from "next/navigation";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { isLogged } = useAuth();
 
-  console.log(isLogged);
-
   if (isLogged === null)
     return (
       <div className="min-h-dvh w-full flex flex-col items-center justify-center">

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,17 +17,8 @@ export const metadata = {
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
-      <div className="absolute top-4 left-4">
-        <Button variant="ghost" size="sm">
-          <Link href="/" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Volver al inicio</span>
-          </Link>
-        </Button>
-      </div>
-
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
+      <div className="w-full max-w-md flex items-center flex-col gap-4">
+        <div className="mb-4 text-center">
           <Link href="/" className="inline-block">
             <span className="text-2xl font-bold">
               <span className="text-primary">Minds</span>
@@ -51,6 +41,13 @@ export default function LoginPage() {
             <LoginForm />
           </CardContent>
         </Card>
+        <div className="">
+          <Button variant="ghost" size="sm">
+            <Link href="/" className="flex items-center gap-2">
+              <span>Volver al inicio</span>
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

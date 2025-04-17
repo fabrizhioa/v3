@@ -85,7 +85,7 @@ export default function NovedadesTrading() {
   useEffect(() => {
     if (auth?.id) obtenerArticulos(auth?.id);
   }, [auth]);
-  console.log(articulos);
+
   // Renderiza un elemento de contenido basado en su tipo
   const renderContentElement = (
     element: ContenidoElementoArticulo,
@@ -219,10 +219,10 @@ export default function NovedadesTrading() {
                   <div className="flex items-center">
                     <Link
                       className="flex items-center"
-                      href={"/app/usuario/" + articulo.autor.id}
+                      href={"/app/usuario/" + articulo.creador.usuario}
                     >
                       <User className="h-4 w-4 mr-1" />
-                      <span>{articulo.autor.nombre_completo}</span>
+                      <span>{articulo.creador.nombre_completo}</span>
                     </Link>
                   </div>
                   <div className="flex items-center">
@@ -303,11 +303,11 @@ export default function NovedadesTrading() {
                   <span>{formatDateLong(selectedArticulo.fecha)}</span>
                 </div>
                 <Link
-                  href={"/app/usuario/" + selectedArticulo.autor.id}
+                  href={"/app/usuario/" + selectedArticulo.creador.id}
                   className="flex items-center"
                 >
                   <User className="h-4 w-4 mr-1" />
-                  <span>{selectedArticulo.autor.nombre_completo}</span>
+                  <span>{selectedArticulo.creador.nombre_completo}</span>
                 </Link>
                 <div className="flex items-center">
                   <DollarSign className="h-4 w-4 mr-1" />

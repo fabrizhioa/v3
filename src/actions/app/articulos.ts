@@ -16,7 +16,7 @@ export async function obtenerArticulosByUser(userId: string) {
 
   const articulos = await prisma.articulo.findMany({
     where: {
-      autor_id: {
+      id: {
         in: seguidos,
       },
     },
@@ -30,8 +30,8 @@ export async function obtenerArticulosByUser(userId: string) {
       resumen: true,
       tendencia: true,
       contenido: true,
-      autor_id: true,
-      autor: {
+      id_creador: true,
+      creador: {
         select: {
           nombre_completo: true,
           id: true,

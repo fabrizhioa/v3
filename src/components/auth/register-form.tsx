@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { registro } from "@/actions/auth";
 import { useToast } from "../ui/toaster";
+import { Select } from "../ui/select";
+import paises from "@/consts/paises";
 
 const calculatePasswordStrength = (password: string) => {
   if (!password) return 0;
@@ -55,31 +57,6 @@ export function RegisterForm() {
     genero: "",
     referente: rf ?? "",
   });
-
-  const paises = [
-    "Argentina",
-    "Bolivia",
-    "Brasil",
-    "Chile",
-    "Colombia",
-    "Costa Rica",
-    "Cuba",
-    "Ecuador",
-    "El Salvador",
-    "España",
-    "Estados Unidos",
-    "Guatemala",
-    "Honduras",
-    "México",
-    "Nicaragua",
-    "Panamá",
-    "Paraguay",
-    "Perú",
-    "Puerto Rico",
-    "República Dominicana",
-    "Uruguay",
-    "Venezuela",
-  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -129,6 +106,7 @@ export function RegisterForm() {
       pais: "",
       fecha_nacimiento: "",
       terminos: "",
+      genero: "",
     };
 
     // Validar usuario
@@ -236,7 +214,7 @@ export function RegisterForm() {
       nombre_completo: formData.nombre_completo,
       pais: formData.pais,
       fecha_nacimiento: new Date(formData.fecha_nacimiento),
-      genero: formData.genero as "MASCULINO" | "FEMENINO" | "OTRO",
+      genero: formData.genero as "masculino" | "femenino" | "otro",
       referente_user: formData.referente ?? null,
     });
 
@@ -255,8 +233,6 @@ export function RegisterForm() {
       });
       setIsLoading(false);
     }
-
-    // if (success) {
   }
 
   return (
@@ -319,7 +295,16 @@ export function RegisterForm() {
           <label htmlFor="pais" className="text-sm font-medium">
             País
           </label>
-          <select
+          <Select
+            options={paises}
+            value={formData.pais}
+            onValueChange={handleChange}
+            name="pais"
+            id="pais"
+            disabled={isLoading}
+            label="Selecciona un país"
+          />
+          {/* <select
             id="pais"
             name="pais"
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -333,26 +318,35 @@ export function RegisterForm() {
                 {pais}
               </option>
             ))}
-          </select>
+          </select> */}
         </div>
 
         <div className="space-y-2">
           <label htmlFor="genero" className="text-sm font-medium">
             Genero
           </label>
-          <select
-            id="genero"
-            name="genero"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          <Select
+            options={[
+              {
+                valor: "masculino",
+                span: "Masculino",
+              },
+              {
+                valor: "femenino",
+                span: "Femenino",
+              },
+              {
+                valor: "otro",
+                span: "Otro",
+              },
+            ]}
             value={formData.genero}
-            onChange={handleChange}
+            onValueChange={handleChange}
+            name="genero"
+            id="genero"
             disabled={isLoading}
-          >
-            <option value="">Selecciona un genero</option>
-            <option value="MASCULINO">Masculino</option>
-            <option value="FEMENINO">Femenino</option>
-            <option value="OTRO">Otro</option>
-          </select>
+            label="Selecciona un genero"
+          />
         </div>
 
         <div className="space-y-2">
@@ -375,6 +369,25 @@ export function RegisterForm() {
             }}
             disabled={isLoading}
           />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="clave" className="text-sm font-medium">
+            Referente
+          </label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="referente"
+              name="referente"
+              type="text"
+              placeholder="usuario123"
+              className="pl-10 pr-10"
+              value={formData.referente}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -456,7 +469,7 @@ export function RegisterForm() {
               type="button"
               variant="ghost"
               size="sm"
-              className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground"
+              className="absolute right-0 top-0 h-full px-3 py-2"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={isLoading}
             >

@@ -2,34 +2,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import paises from "@/consts/paises";
 import { $Enums } from "@prisma/client";
 import Image from "next/image";
 
 import { useState } from "react";
-
-const paises = [
-  { valor: "Argentina", span: "Argentina" },
-  { valor: "Bolivia", span: "Bolivia" },
-  { valor: "Brasil", span: "Brasil" },
-  { valor: "Chile", span: "Chile" },
-  { valor: "Colombia", span: "Colombia" },
-  { valor: "Costa Rica", span: "Costa Rica" },
-  { valor: "Cuba", span: "Cuba" },
-  { valor: "Ecuador", span: "Ecuador" },
-  { valor: "El Salvador", span: "El Salvador" },
-  { valor: "Estados Unidos", span: "Estados Unidos" },
-  { valor: "Guatemala", span: "Guatemala" },
-  { valor: "Honduras", span: "Honduras" },
-  { valor: "México", span: "México" },
-  { valor: "Nicaragua", span: "Nicaragua" },
-  { valor: "Panamá", span: "Panamá" },
-  { valor: "Paraguay", span: "Paraguay" },
-  { valor: "Perú", span: "Perú" },
-  { valor: "Puerto Rico", span: "Puerto Rico" },
-  { valor: "República Dominicana", span: "República Dominicana" },
-  { valor: "Uruguay", span: "Uruguay" },
-  { valor: "Venezuela", span: "Venezuela" },
-];
 
 export default function FormPersonalPerfil({
   usuario,
@@ -136,17 +113,16 @@ export default function FormPersonalPerfil({
             id="genero"
             name="genero"
             value={genero}
-            defaultValue={genero}
-            onValueChange={(value) =>
-              setGenero(value as "MASCULINO" | "FEMENINO" | "OTRO")
+            onValueChange={(event) =>
+              setGenero(event.target.value as "masculino" | "femenino" | "otro")
             }
+            label="Selecciona un genero"
             disabled={isLoading}
             options={[
-              { valor: "MASCULINO", span: "Masculino" },
-              { valor: "FEMENINO", span: "Femenino" },
-              { valor: "OTRO", span: "Otro" },
+              { valor: "masculino", span: "Masculino" },
+              { valor: "femenino", span: "Femenino" },
+              { valor: "otro", span: "Otro" },
             ]}
-            placeholder="paises"
           />
         </div>
         <div className="space-y-2 ">
@@ -155,11 +131,10 @@ export default function FormPersonalPerfil({
             id="pais"
             name="pais"
             value={pais}
-            defaultValue={pais}
-            onValueChange={(value) => setPais(value)}
+            onValueChange={(event) => setPais(event.target.value)}
             disabled={isLoading}
+            label="Selecciona un pais"
             options={paises}
-            placeholder="paises"
           />
         </div>
         <div className="space-y-2">

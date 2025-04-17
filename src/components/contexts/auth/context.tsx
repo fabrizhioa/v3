@@ -73,6 +73,7 @@ export const AuthContextProvider = ({
     <AuthContext.Provider
       value={{
         auth,
+        rol: auth?.rol ?? "usuario",
         authDispatch: dispatch,
         validarConexion,
         isLogged: auth === null ? null : Boolean(auth.id),

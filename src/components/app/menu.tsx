@@ -1,47 +1,64 @@
 import { useAuth } from "@/components/contexts/auth/context";
 import { NAV_LINKS } from "@/lib/navlink";
-import { LogOutIcon } from "lucide-react";
-import Image from "next/image";
+import { LogOutIcon, MenuIcon, ShieldUserIcon, XIcon } from "lucide-react";
 import NavLink from "./navlink";
+import { Button } from "../ui/button";
+import { useState } from "react";
 
 export default function Menu() {
-  const { authDispatch } = useAuth();
-
+  const { authDispatch, auth } = useAuth();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const handleLogout = () => {
     authDispatch({ type: "logout" });
     localStorage.removeItem("token");
   };
 
   return (
-    <div className="flex items-center justify-center p-2 lg:hidden sticky bottom-0 left-0 border-t">
-      <menu className="flex items-center px-4 py-3 gap-6 justify-center bg-darkslate rounded-full">
-        <Image
-          priority
-          src="/assets/logo.svg"
-          alt="Minds Over Market"
-          width={24}
-          height={24}
-        />
+    <div className="flex flex-col items-center p-2 lg:hidden bottom-8 z-50 right-4 fixed gap-2">
+      {isOpen && (
+        <menu className="flex flex-col bg-card text-card-foreground items-center px-4 py-3 gap-6 justify-center bg-darkslate rounded-lg transition-all">
+          {NAV_LINKS.map(({ link, icon: Icon, end }, index) => (
+            <NavLink
+              link={link}
+              key={index}
+              className="p-1.5 transition-all flex items-center justify-center"
+              activeClassName="text-primary"
+              end={end}
+              onClick={() => setIsOpen(false)}
+            >
+              {Icon && <Icon strokeWidth={1.5} className="size-6" />}
+            </NavLink>
+          ))}
 
-        {NAV_LINKS.map(({ link, icon: Icon, end }, index) => (
-          <NavLink
-            link={link}
-            key={index}
-            className="p-1.5 transition-all flex items-center justify-center"
-            activeClassName="text-primary"
-            end={end}
+          {(auth?.rol === "desarrollador" || auth?.rol === "administrador") && (
+            <NavLink
+              link="/app/admin"
+              className="p-1.5 transition-all flex items-center justify-center"
+              activeClassName="text-primary"
+              end
+            >
+              <ShieldUserIcon strokeWidth={1.5} className="size-6" />
+            </NavLink>
+          )}
+          <button
+            className="p-1.5 transition-all  rounded-full bg-red flex items-center justify-center"
+            onClick={handleLogout}
           >
-            {Icon && <Icon strokeWidth={1.5} className="size-6" />}
-          </NavLink>
-        ))}
+            <LogOutIcon strokeWidth={1.5} className="size-6" />
+          </button>
+        </menu>
+      )}
 
-        <button
-          className="p-1.5 transition-all  rounded-full bg-red flex items-center justify-center"
-          onClick={handleLogout}
+      <div className="px-4 pt-2">
+        <Button
+          size="icon"
+          variant={isOpen ? "destructive" : "default"}
+          onClick={() => setIsOpen(!isOpen)}
+          className="transition-all"
         >
-          <LogOutIcon strokeWidth={1.5} className="size-6" />
-        </button>
-      </menu>
+          {isOpen ? <XIcon /> : <MenuIcon />}
+        </Button>
+      </div>
     </div>
   );
 }

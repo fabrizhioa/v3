@@ -22,10 +22,11 @@ export type Articulo = {
   mercado: string;
   tendencia?: $Enums.TendenciaArticulo;
   resumen?: string | null;
+  id_paquete?: string | null;
 };
 
 export interface ArticuloConUsuario extends Articulo {
-  autor: {
+  creador: {
     id: string;
     nombre_completo: string;
     usuario: string;

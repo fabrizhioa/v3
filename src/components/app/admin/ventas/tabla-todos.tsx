@@ -1,4 +1,5 @@
 import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -6,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ProductoVentasProps } from "@/types/admin/ventas";
-import { Table } from "lucide-react";
+
 import Link from "next/link";
 
 export default function TablaTodosVentas({

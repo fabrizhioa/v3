@@ -10,18 +10,18 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { auth } = useAuth();
-  console.log(auth);
-  if (auth?.rol !== "ADMIN" && auth?.rol !== "DESARROLLADOR")
+
+  if (auth?.rol !== "administrador" && auth?.rol !== "desarrollador")
     return (
-      <div className="container flex flex-col gap-8 items-center justify-center p-16">
+      <div className="container flex flex-col gap-8 items-center justify-center p-16 text-center">
         <Image
           src="/assets/logo.svg"
           alt="Logo de la empresa"
           width={100}
           height={100}
         />
-        <h2 className="text-3xl uppercase font-bold text-custom-red">
-          Acceso restringido
+        <h2 className="text-3xl uppercase font-bold ">
+          Acceso <span className="text-custom-red">restringido</span>
         </h2>
       </div>
     );

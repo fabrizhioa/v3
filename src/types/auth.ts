@@ -22,4 +22,5 @@ export type AuthContextProps = {
   isSubscriptionExpired: () => boolean;
   authDispatch: React.Dispatch<AuthAction>;
   validarConexion: () => Promise<UserData | false>;
+  rol: $Enums.RolUsuario;
 };

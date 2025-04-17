@@ -39,7 +39,8 @@ export default function Header() {
                 {Icon && <Icon className="size-4 text-xs" strokeWidth={2} />}
               </NavLink>
             ))}
-            {(auth?.rol === "ADMIN" || auth?.rol === "DESARROLLADOR") && (
+            {(auth?.rol === "administrador" ||
+              auth?.rol === "desarrollador") && (
               <NavLink
                 link="/app/admin"
                 className="flex items-center gap-1 text-white hover:bg-black/40 py-0.5 px-2 text-xs rounded "

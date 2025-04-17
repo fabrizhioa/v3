@@ -112,6 +112,10 @@ export async function ingreso({
 
   const { clave: clave_original, bloqueado, ...datos } = consulta;
 
+  if (["administrador", "desarrolador"].includes(datos.rol)) {
+    return { error: "El usuario no tiene permisos para ingresar" };
+  }
+
   if (bloqueado)
     return { error: "El usuario se encuentra bloqueado, contacta con soporte" };
 
@@ -213,9 +217,9 @@ export async function validarConexionUsuario(
 
   if (!query) return false;
 
-  const { bloqueado, ...data } = query.usuario;
+  const { bloqueado } = query.usuario;
 
   if (bloqueado) return false;
 
-  return data;
+  return query.usuario;
 }

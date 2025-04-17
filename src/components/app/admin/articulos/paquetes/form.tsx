@@ -1,44 +1,17 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
-import {
-  CalendarIcon,
-  Plus,
-  Trash2,
-  Eye,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
-
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
-import type { Articulo, ContenidoElementoArticulo } from "@/types/articulos";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import Link from "next/link";
-import { PaquetesArticulosProps } from "@/types/admin/paquetesArticulos";
-import { paquete_articulos } from "@prisma/client";
+import {
+  DatosActualizacionPaqueteArticulos,
+  DatosCreacionPaqueteArticulos,
+  DatosPaqueteArticulosProps,
+} from "@/types/admin/paquetesArticulos";
 
 // Categorías disponibles
 const categorias = [
@@ -53,14 +26,16 @@ const categorias = [
 ];
 
 interface PaqueteArticuloFormProps {
-  paquete?: paquete_articulos;
-  onSubmit: (articulo: Articulo, eliminados: string[]) => void;
+  paquete?: DatosPaqueteArticulosProps;
+  onUpdate?: (paquete: DatosActualizacionPaqueteArticulos) => void;
+  onCreate?: (paquete: DatosCreacionPaqueteArticulos) => void;
   disabled?: boolean;
 }
 
 export default function PaqueteArticuloForm({
   paquete,
-  onSubmit,
+  onUpdate,
+  onCreate,
   disabled = false,
 }: PaqueteArticuloFormProps) {
   const [titulo, setTitulo] = useState(paquete?.titulo || "");
@@ -70,85 +45,37 @@ export default function PaqueteArticuloForm({
   const [categoria, setCategoria] = useState(paquete?.categoria || "");
   const [mercado, setMercado] = useState(paquete?.mercado || "");
 
-  const [eliminados, setEliminados] = useState<string[]>([]);
-
   // Manejar el envío del formulario
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Formatear la fecha como string YYYY-MM-DD
+    if (paquete) {
+      const PaqueteArticulo: DatosActualizacionPaqueteArticulos = {
+        id: paquete?.id,
+        titulo: titulo,
+        resumen: resumen,
+        descripcion: descripcion,
+        categoria: categoria,
+        mercado: mercado,
+        precio: Number(precio),
+      };
+      if (onUpdate) onUpdate(PaqueteArticulo);
+    } else {
+      const PaqueteArticulo: DatosCreacionPaqueteArticulos = {
+        titulo: titulo,
+        resumen: resumen,
+        descripcion: descripcion,
+        categoria: categoria,
+        mercado: mercado,
+        precio: Number(precio),
+      };
+      if (onCreate) onCreate(PaqueteArticulo);
+    }
 
     // Crear el objeto de novedad completo
-    const articuloCompleto: Articulo = {
-      id: paquete?.id as string,
-      titulo: titulo,
-      resumen: resumen,
-      descripcion: descripcion,
-      categoria: categoria,
-      mercado: mercado,
-      precio: precio,
-      estrellas: paquete?.estrellas || 0,
-    };
-
-    onSubmit(articuloCompleto, eliminados);
   };
 
   // Agregar un elemento de contenido
-  const addContentElement = () => {
-    if (!currentElement.content.trim()) return;
-
-    setContenido([...contenido, currentElement]);
-
-    // Resetear el elemento actual
-    setCurrentElement({
-      type: elementType as
-        | "paragraph"
-        | "image"
-        | "video"
-        | "quote"
-        | "heading"
-        | "list",
-      content: "",
-    });
-  };
-
-  // Eliminar un elemento de contenido
-  const removeContentElement = (index: number) => {
-    const newContent = [...contenido];
-    newContent.splice(index, 1);
-
-    if (contenido[index].id) {
-      setEliminados([...eliminados, contenido[index].id]);
-    }
-    setContenido(newContent);
-  };
-
-  // Manejar cambios en el contenido del elemento actual
-  const handleContentChange = (value: string) => {
-    setCurrentElement({
-      ...currentElement,
-      content: value,
-    });
-  };
-
-  const changeElementPosition = (type: "up" | "down", index: number) => {
-    if (type === "up" && index > 0) {
-      const newPosition = index - 1;
-      const contenidoOrdenado = [...contenido];
-      contenidoOrdenado[newPosition] = contenido[index];
-      contenidoOrdenado[index] = contenido[newPosition];
-      setContenido(contenidoOrdenado);
-    }
-
-    if (type === "down" && index <= contenido.length - 1) {
-      const newPosition = index + 1;
-      const contenidoOrdenado = [...contenido];
-      contenidoOrdenado[newPosition] = contenido[index];
-      contenidoOrdenado[index] = contenido[newPosition];
-      console.log("down", contenidoOrdenado);
-      setContenido(contenidoOrdenado);
-    }
-  };
 
   // Manejar cambios en campos adicionales del elemento actual
 
@@ -159,7 +86,7 @@ export default function PaqueteArticuloForm({
           <div className="space-y-2 col-span-full">
             <label className="text-sm font-medium">Título</label>
             <Input
-              placeholder="Título del paquete de articulos"
+              placeholder="Título del paquete"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
             />
@@ -168,11 +95,10 @@ export default function PaqueteArticuloForm({
           <div className="space-y-2">
             <label className="text-sm font-medium">Categoría</label>
             <Select
-              onValueChange={setCategoria}
-              defaultValue={categoria}
+              onValueChange={(e) => setCategoria(e.target.value)}
               value={categoria}
               options={categorias}
-              placeholder="Selecciona una opcion"
+              label="Selecciona una opcion"
             />
           </div>
 
@@ -197,17 +123,17 @@ export default function PaqueteArticuloForm({
             <label className="text-sm font-medium">Resumen</label>
             <Textarea
               placeholder="Resumen de 300 caracteres sobre el paquete"
-              value={mercado}
-              onChange={(e) => setMercado(e.target.value)}
+              value={resumen}
+              onChange={(e) => setResumen(e.target.value)}
             />
           </div>
           <div className="space-y-2 col-span-full">
             <label className="text-sm font-medium">Descripcion</label>
             <Textarea
               placeholder="Descripcion general del paquete"
-              value={mercado}
+              value={descripcion}
               rows={5}
-              onChange={(e) => setMercado(e.target.value)}
+              onChange={(e) => setDescripcion(e.target.value)}
             />
           </div>
         </div>
@@ -405,7 +331,7 @@ export default function PaqueteArticuloForm({
 
         <div className="flex justify-end gap-4">
           <Link
-            href="/app/admin/articulos"
+            href="/app/admin/articulos/paquetes"
             className={buttonVariants({ variant: "outline" })}
           >
             Cancelar
@@ -416,7 +342,7 @@ export default function PaqueteArticuloForm({
           </Button>
         </div>
       </form>
-
+      {/* 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -430,7 +356,7 @@ export default function PaqueteArticuloForm({
             )}
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

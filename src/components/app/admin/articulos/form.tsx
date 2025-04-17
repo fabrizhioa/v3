@@ -2,25 +2,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CalendarIcon,
-  Plus,
-  Trash2,
-  Eye,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
+import { Plus, Trash2, Eye, ArrowUp, ArrowDown } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -31,11 +18,6 @@ import {
 
 import type { Articulo, ContenidoElementoArticulo } from "@/types/articulos";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import Link from "next/link";
 
 // Categorías disponibles
@@ -54,14 +36,17 @@ interface NovedadFormProps {
   articulo?: Articulo;
   onSubmit: (articulo: Articulo, eliminados: string[]) => void;
   disabled?: boolean;
+  paquetes?: { valor: string; span: string }[];
 }
 
 export default function ArticuloForm({
   articulo,
+  paquetes,
   onSubmit,
   disabled = false,
 }: NovedadFormProps) {
   const [titulo, setTitulo] = useState(articulo?.titulo || "");
+  const [resumen, setResumen] = useState(articulo?.resumen || "");
   const [fecha, setFecha] = useState(
     articulo?.fecha ? new Date(articulo.fecha) : new Date()
   );
@@ -71,6 +56,7 @@ export default function ArticuloForm({
   const [contenido, setContenido] = useState<ContenidoElementoArticulo[]>(
     articulo?.contenido || []
   );
+  const [paquete, setPaquete] = useState(articulo?.id_paquete ?? "");
   const [currentElement, setCurrentElement] =
     useState<ContenidoElementoArticulo>({
       type: "paragraph",
@@ -97,10 +83,14 @@ export default function ArticuloForm({
       tendencia: tendencia,
       estrellas: articulo?.estrellas || 0,
       contenido: contenido,
+      resumen: resumen,
+      id_paquete: paquete,
     };
 
     onSubmit(articuloCompleto, eliminados);
   };
+
+  console.log(articulo?.id_paquete);
 
   // Agregar un elemento de contenido
   const addContentElement = () => {
@@ -208,10 +198,13 @@ export default function ArticuloForm({
           <div className="space-y-2">
             <label className="text-sm font-medium">Nivel de encabezado</label>
             <Select
-              placeholder="Selecciona un nivel"
+              label="Selecciona un nivel"
               value={currentElement.level?.toString() || "2"}
-              onValueChange={(value: string) =>
-                handleAdditionalFieldChange("level", Number.parseInt(value))
+              onValueChange={(e) =>
+                handleAdditionalFieldChange(
+                  "level",
+                  Number.parseInt(e.target.value)
+                )
               }
               options={[
                 {
@@ -397,41 +390,48 @@ export default function ArticuloForm({
           <div className="space-y-2 col-span-full">
             <label className="text-sm font-medium">Título</label>
             <Input
-              placeholder="Título de la novedad"
+              placeholder="Título del articulo"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2 col-span-full">
+            <label className="text-sm font-medium">Resumen</label>
+            <Textarea
+              placeholder="Resumen del articulo"
+              value={resumen}
+              onChange={(e) => setResumen(e.target.value)}
+              maxLength={350}
+              className="resize-none"
+            />
+          </div>
+
+          <div className="space-y-2 col-span-full">
+            <label className="text-sm font-medium">Paquete de articulos</label>
+            <Select
+              label="Selecciona un paquete"
+              value={paquete}
+              onValueChange={(e) => setPaquete(e.target.value)}
+              options={paquetes ?? []}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Fecha</label>
-            <Popover>
-              <PopoverTrigger
-                className={`${buttonVariants({ variant: "outline" })} w-full`}
-              >
-                {fecha.toLocaleDateString()}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto p-0 bg-background"
-                align="start"
-              >
-                <Calendar
-                  value={fecha}
-                  onChange={(value) => setFecha(value as Date)}
-                />
-              </PopoverContent>
-            </Popover>
+            <Input
+              type="date"
+              value={fecha.toISOString().split("T")[0]}
+              onChange={(e) => setFecha(new Date(e.target.value))}
+            />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Categoría</label>
             <Select
-              onValueChange={setCategoria}
-              defaultValue={categoria}
+              onValueChange={(e) => setCategoria(e.target.value)}
               value={categoria}
               options={categorias}
-              placeholder="Selecciona una opcion"
+              label="Selecciona una opcion"
             />
           </div>
 
@@ -447,12 +447,13 @@ export default function ArticuloForm({
           <div className="space-y-2">
             <label className="text-sm font-medium">Tendencia</label>
             <Select
-              onValueChange={(value) =>
-                setTendencia(value as "alcista" | "bajista" | "neutral")
+              onValueChange={(e) =>
+                setTendencia(
+                  e.target.value as "alcista" | "bajista" | "neutral"
+                )
               }
-              defaultValue={tendencia}
               value={tendencia}
-              placeholder="Selecciona la tendencia"
+              label="Selecciona la tendencia"
               options={[
                 {
                   valor: "alcista",

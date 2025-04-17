@@ -3,35 +3,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Bell, TrendingDown, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { DatosAlertasLandingProps } from "@/types/landing";
 
-export default function AlertsSection() {
-  const alerts = [
-    {
-      id: 1,
-      market: "EUR/USD",
-      type: "Soporte",
-      price: "1.0850",
-      direction: "alcista",
-      time: "Hace 35 min",
-    },
-    {
-      id: 2,
-      market: "Bitcoin",
-      type: "Resistencia",
-      price: "$75,200",
-      direction: "bajista",
-      time: "Hace 1h 20m",
-    },
-    {
-      id: 3,
-      market: "Tesla",
-      type: "Ruptura",
-      price: "$242.50",
-      direction: "alcista",
-      time: "Hace 2h 15m",
-    },
-  ];
-
+export default function AlertsSection({
+  alertas,
+}: {
+  alertas: DatosAlertasLandingProps[];
+}) {
   return (
     <section className="py-20 bg-background">
       <div className="container">
@@ -108,39 +86,40 @@ export default function AlertsSection() {
             </div>
 
             <div className="space-y-4">
-              {alerts.map((alert) => (
+              {alertas.map((alerta) => (
                 <Card
-                  key={alert.id}
+                  key={alerta.id}
                   className="border hover:shadow-sm transition-shadow"
                 >
                   <CardContent className="p-4">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold">{alert.market}</span>
-                        <Badge variant="outline">{alert.type}</Badge>
+                        <span className="font-bold">{alerta.mercado}</span>
+                        <Badge variant="outline">{alerta.tipo}</Badge>
                       </div>
                       <span className="text-sm text-muted-foreground">
-                        {alert.time}
+                        {alerta.fecha_publicacion?.toLocaleDateString()}
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-lg font-medium">{alert.price}</span>
+                      <span className="text-lg font-medium">
+                        {alerta.precio}
+                      </span>
                       <div className="flex items-center">
-                        {alert.direction === "alcista" ? (
+                        {alerta.direccion === "bullish" ? (
                           <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
                         ) : (
                           <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
                         )}
                         <span
                           className={
-                            alert.direction === "alcista"
+                            `capitalize ` + alerta.direccion === "bearish"
                               ? "text-green-500"
                               : "text-red-500"
                           }
                         >
-                          {alert.direction.charAt(0).toUpperCase() +
-                            alert.direction.slice(1)}
+                          {alerta.direccion}
                         </span>
                       </div>
                     </div>

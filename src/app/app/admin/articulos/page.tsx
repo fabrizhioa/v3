@@ -4,18 +4,15 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
-
-// Importamos el tipo NovedadTrading
-import type { Articulo } from "@/types/articulos";
-
 // Datos iniciales (los mismos que usamos en el componente de visualización)
 import TablaArticulos from "@/components/app/admin/articulos/tabla";
 import { eliminarArticulo, obtenerArticulos } from "@/actions/admin/articulos";
 import { useToast } from "@/components/ui/toaster";
+import { ListaArticulosProps } from "@/types/admin/articulos";
 
 export default function AdminArticulosPage() {
   const { addToast } = useToast();
-  const [articulos, setArticulos] = useState<Articulo[]>([]);
+  const [articulos, setArticulos] = useState<ListaArticulosProps[]>([]);
 
   useEffect(() => {
     async function obtenerDatos() {

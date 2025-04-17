@@ -49,10 +49,25 @@ export default function AsideMenuAdmin() {
             },
           ]}
         />
+        <MultiNavLink
+          mainPath="/app/admin/alertas"
+          title="Alertas"
+          Icon={ChartCandlestickIcon}
+          data={[
+            {
+              href: "/app/admin/alertas ",
+              text: "Lista",
+              Icon: ListCollapse,
+              end: true,
+            },
+            {
+              href: "/app/admin/alertas/paquetes",
+              text: "Paquetes",
+              Icon: BoxesIcon,
+            },
+          ]}
+        />
 
-        <NavLink href="/app/admin/alertas" Icon={ChartCandlestickIcon}>
-          Alertas
-        </NavLink>
         <NavLink href="/app/admin/envivos" Icon={VideoIcon}>
           En vivos
         </NavLink>

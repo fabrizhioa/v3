@@ -19,11 +19,11 @@ import {
   TrendingDown,
   ArrowRight,
 } from "lucide-react";
-import type { Articulo } from "@/types/articulos";
 import Link from "next/link";
+import { ListaArticulosProps } from "@/types/admin/articulos";
 
 interface NovedadesTableProps {
-  articulos: Articulo[];
+  articulos: ListaArticulosProps[];
   onDelete: (id: string) => void;
 }
 
@@ -45,7 +45,7 @@ export default function TablaArticulos({
       month: "long",
       day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString("es-ES", options);
+    return new Date(dateString).toLocaleDateString("es-MX", options);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -79,6 +79,7 @@ export default function TablaArticulos({
           <TableHeader>
             <TableRow>
               <TableHead>Título</TableHead>
+              <TableHead>Creador</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead>Categoría</TableHead>
               <TableHead>Mercado</TableHead>
@@ -101,6 +102,16 @@ export default function TablaArticulos({
                 <TableRow key={novedad.id}>
                   <TableCell className="font-medium">
                     {novedad.titulo}
+                  </TableCell>
+                  <TableCell className="font-medium text-primary">
+                    {/* <figure className="size-8">
+                      <img
+                        src={novedad.creador.avatar}
+                        alt={novedad.creador.usuario}
+                        className="size-full object-cover rounded-full"
+                      />
+                    </figure> */}
+                    <span>{novedad.creador.usuario}</span>
                   </TableCell>
                   <TableCell>
                     {formatDate(novedad.fecha.toISOString())}

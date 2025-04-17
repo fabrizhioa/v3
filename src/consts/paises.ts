@@ -1,0 +1,25 @@
+const paises = [
+  { valor: "Argentina", span: "Argentina" },
+  { valor: "Bolivia", span: "Bolivia" },
+  { valor: "Brasil", span: "Brasil" },
+  { valor: "Chile", span: "Chile" },
+  { valor: "Colombia", span: "Colombia" },
+  { valor: "Costa Rica", span: "Costa Rica" },
+  { valor: "Cuba", span: "Cuba" },
+  { valor: "Ecuador", span: "Ecuador" },
+  { valor: "El Salvador", span: "El Salvador" },
+  { valor: "Estados Unidos", span: "Estados Unidos" },
+  { valor: "Guatemala", span: "Guatemala" },
+  { valor: "Honduras", span: "Honduras" },
+  { valor: "México", span: "México" },
+  { valor: "Nicaragua", span: "Nicaragua" },
+  { valor: "Panamá", span: "Panamá" },
+  { valor: "Paraguay", span: "Paraguay" },
+  { valor: "Perú", span: "Perú" },
+  { valor: "Puerto Rico", span: "Puerto Rico" },
+  { valor: "República Dominicana", span: "República Dominicana" },
+  { valor: "Uruguay", span: "Uruguay" },
+  { valor: "Venezuela", span: "Venezuela" },
+];
+
+export default paises;

@@ -10,6 +10,7 @@ interface NavLinkProps {
   activeClassName?: string;
   inactiveClassName?: string;
   end?: boolean;
+  onClick?: (event?: unknown) => void;
 }
 
 export default function NavLink({
@@ -19,6 +20,7 @@ export default function NavLink({
   activeClassName,
   inactiveClassName,
   children,
+  onClick,
 }: NavLinkProps) {
   "use client";
 
@@ -31,6 +33,7 @@ export default function NavLink({
       className={`${className ?? ""} ${
         isActive ? activeClassName ?? "" : inactiveClassName ?? ""
       }`}
+      onClick={onClick}
     >
       {children}
     </Link>

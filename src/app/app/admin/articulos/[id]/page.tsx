@@ -1,6 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { actualizarArticulo, obtenerArticulo } from "@/actions/admin/articulos";
+import {
+  actualizarArticulo,
+  obtenerArticulo,
+  obtenerListaDePaquetes,
+} from "@/actions/admin/articulos";
 import ArticuloForm from "@/components/app/admin/articulos/form";
 import { Loading } from "@/components/common/loadings";
 import { useAuth } from "@/components/contexts/auth/context";
@@ -14,6 +18,9 @@ type articuloProps = null | false | Articulo;
 export default function AdminArticuloNuevoPage() {
   const { id } = useParams();
   const [articulo, setArticulo] = useState<articuloProps>(null);
+  const [paquetes, setPaquetes] = useState<{ valor: string; span: string }[]>(
+    []
+  );
   const [sending, setSending] = useState(false);
   const { auth } = useAuth();
   const { addToast } = useToast();
@@ -21,6 +28,7 @@ export default function AdminArticuloNuevoPage() {
 
   async function obtenerDatos() {
     const resultado = await obtenerArticulo(id as string);
+    const paquetes = await obtenerListaDePaquetes();
     if (resultado === null) {
       addToast({
         title: "Error al obtener articulo",
@@ -30,6 +38,9 @@ export default function AdminArticuloNuevoPage() {
       router.push("/app/admin/articulos");
     }
     setArticulo(resultado);
+    setPaquetes(
+      paquetes.map((paquete) => ({ valor: paquete.id, span: paquete.titulo }))
+    );
   }
   useEffect(() => {
     if (id) {
@@ -40,7 +51,7 @@ export default function AdminArticuloNuevoPage() {
   async function onSubmit(articulo: Articulo, eliminados: string[]) {
     if (
       auth !== null &&
-      (auth.rol === "ADMIN" || auth.rol === "DESARROLLADOR")
+      (auth.rol === "administrador" || auth.rol === "desarrollador")
     ) {
       setSending(true);
       const creacion = await actualizarArticulo(articulo, eliminados);
@@ -68,6 +79,7 @@ export default function AdminArticuloNuevoPage() {
         <Loading />
       ) : articulo !== false && articulo !== null ? (
         <ArticuloForm
+          paquetes={paquetes}
           articulo={articulo}
           onSubmit={onSubmit}
           disabled={sending}

@@ -11,22 +11,21 @@ import LandingHeader from "@/components/landing/header";
 import LandingFooter from "@/components/landing/footer";
 import { useEffect, useState } from "react";
 import { getLandingData } from "@/actions/landing";
-import { Articulo } from "@/types/articulos";
-
-interface ArticulosLandingProps extends Articulo {
-  autor: {
-    nombre_completo: string;
-  };
-}
+import {
+  DatosAlertasLandingProps,
+  DatosArticulosLandingProps,
+  DatosCursosLandingProps,
+  DatosEnvivosLandingProps,
+} from "@/types/landing";
 
 export default function Home() {
-  const [cursos, setCursos] = useState<unknown[]>([]);
-  const [alertas, setAlertas] = useState<unknown[]>([]);
-  const [lives, setLives] = useState<unknown[]>([]);
-  const [articulos, setArticulos] = useState<ArticulosLandingProps[]>([]);
+  const [cursos, setCursos] = useState<DatosCursosLandingProps[]>([]);
+  const [alertas, setAlertas] = useState<DatosAlertasLandingProps[]>([]);
+  const [lives, setLives] = useState<DatosEnvivosLandingProps[]>([]);
+  const [articulos, setArticulos] = useState<DatosArticulosLandingProps[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       await getLandingData()
         .then((datos) => {
           setCursos(datos.cursos ?? []);
@@ -41,9 +40,7 @@ export default function Home() {
           setLives([]);
           setArticulos([]);
         });
-    };
-
-    fetchData();
+    })();
   }, []);
   return (
     <>
@@ -51,9 +48,9 @@ export default function Home() {
       <main className="flex flex-col gap-3 w-full h-full">
         <HeroSection />
         <FeaturesSection />
-        <CoursesSection />
-        <AlertsSection />
-        <LiveClassesSection />
+        <CoursesSection cursos={cursos} />
+        <AlertsSection alertas={alertas} />
+        <LiveClassesSection envivos={lives} />
         <NewsPreviewSection articulos={articulos} />
         <FAQSection />
         <CTASection />

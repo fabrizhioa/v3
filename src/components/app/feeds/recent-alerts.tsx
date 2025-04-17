@@ -43,7 +43,7 @@ export default function RecentAlerts() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
+    return date.toLocaleDateString("es-MX", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -52,7 +52,7 @@ export default function RecentAlerts() {
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString("es-ES", {
+    return date.toLocaleTimeString("es-MX", {
       hour: "2-digit",
       minute: "2-digit",
     });

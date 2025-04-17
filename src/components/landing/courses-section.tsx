@@ -7,44 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DatosCursosLandingProps } from "@/types/landing";
 import { ArrowRight, Star } from "lucide-react";
-import Image from "next/image";
+
 import Link from "next/link";
 
-export default function CoursesSection() {
-  const courses = [
-    {
-      id: 1,
-      title: "Fundamentos del Trading",
-      level: "Principiante",
-      rating: 4.8,
-      students: 1245,
-      price: "$99",
-      image: "/placeholder.svg?height=400&width=600",
-      instructor: "Carlos Martínez",
-    },
-    {
-      id: 2,
-      title: "Análisis Técnico Avanzado",
-      level: "Intermedio",
-      rating: 4.9,
-      students: 876,
-      price: "$149",
-      image: "/placeholder.svg?height=400&width=600",
-      instructor: "Ana Rodríguez",
-    },
-    {
-      id: 3,
-      title: "Trading de Criptomonedas",
-      level: "Todos los niveles",
-      rating: 4.7,
-      students: 1532,
-      price: "$129",
-      image: "/placeholder.svg?height=400&width=600",
-      instructor: "Miguel López",
-    },
-  ];
-
+export default function CoursesSection({
+  cursos,
+}: {
+  cursos: DatosCursosLandingProps[];
+}) {
   return (
     <section className="py-20 bg-muted/30">
       <div className="container">
@@ -67,39 +39,45 @@ export default function CoursesSection() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course) => (
+          {cursos.map((curso) => (
             <Card
-              key={course.id}
+              key={curso.id}
               className="overflow-hidden border hover:shadow-md transition-shadow"
             >
-              <div className="aspect-video relative">
-                <Image
-                  src={course.image || "/placeholder.svg"}
-                  alt={course.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <Badge variant="outline">{course.level}</Badge>
+                  <Badge variant="outline">{curso.dificultad}</Badge>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                    <span className="text-sm font-medium">{course.rating}</span>
+                    <span className="text-sm font-medium">
+                      {curso.estrellas}
+                    </span>
                   </div>
                 </div>
-                <CardTitle className="mt-2">{course.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Por {course.instructor}
-                </p>
+                <CardTitle className="mt-2">{curso.titulo}</CardTitle>
+                <Link
+                  href={`/auth/login?hr=${encodeURIComponent(
+                    "/app/usuario/" + curso.instructor.usuario
+                  )}`}
+                  className="text-sm text-muted-foreground"
+                >
+                  Por {curso.instructor.nombre_completo}
+                </Link>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  {course.students} estudiantes inscritos
+                  {curso.ventas} estudiantes inscritos
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <span className="text-lg font-bold">{course.price}</span>
+                <span className="text-lg font-bold">
+                  {(() => {
+                    const formatter = new Intl.NumberFormat(undefined, {
+                      style: "currency",
+                    });
+                    return formatter.format(curso.precio);
+                  })()}
+                </span>
                 <Button size="sm">Ver curso</Button>
               </CardFooter>
             </Card>

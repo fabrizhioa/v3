@@ -1,14 +1,18 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import {
+  DatosActualizacionPaqueteArticulos,
+  DatosCreacionPaqueteArticulos,
+  ListaPaquetesArticulosProps,
+} from "@/types/admin/paquetesArticulos";
 import { Articulo } from "@/types/articulos";
-import { Decimal } from "@prisma/client/runtime/client";
 
 export async function obtenerArticulo(id: string) {
   const articulo = await prisma.articulo
     .findUnique({
       select: {
-        autor_id: true,
+        id_creador: true,
         categoria: true,
         id: true,
         contenido: true,
@@ -18,6 +22,7 @@ export async function obtenerArticulo(id: string) {
         resumen: true,
         tendencia: true,
         titulo: true,
+        id_paquete: true,
       },
       where: {
         id: id,
@@ -28,10 +33,19 @@ export async function obtenerArticulo(id: string) {
   return articulo;
 }
 
+export async function obtenerListaDePaquetes() {
+  return await prisma.paquete_articulos.findMany({
+    select: {
+      id: true,
+      titulo: true,
+    },
+  });
+}
+
 export async function obtenerArticulos() {
   const articulos = await prisma.articulo.findMany({
     select: {
-      autor_id: true,
+      id_creador: true,
       categoria: true,
       id: true,
       estrellas: true,
@@ -40,6 +54,13 @@ export async function obtenerArticulos() {
       resumen: true,
       tendencia: true,
       titulo: true,
+      creador: {
+        select: {
+          id: true,
+          avatar: true,
+          usuario: true,
+        },
+      },
     },
   });
 
@@ -58,14 +79,17 @@ export async function crearArticulo(
       mercado: articulo.mercado,
       resumen: articulo.resumen,
       titulo: articulo.titulo,
-      autor_id: autor,
+      id_creador: autor,
       tendencia: articulo.tendencia ?? "neutral",
+      id_paquete:
+        articulo.id_paquete && articulo.id_paquete.trim().length > 0
+          ? articulo.id_paquete
+          : null,
     },
   });
 
   if (!creacionArticulo) return { error: "Problema creando articulo" };
 
-  console.log(articulo.contenido);
   if (articulo.contenido) {
     const adicionarElemento = await prisma.articulo_elemento.createMany({
       data: articulo.contenido?.map((elemento, index) => ({
@@ -117,6 +141,10 @@ export async function actualizarArticulo(
       resumen: articulo.resumen,
       titulo: articulo.titulo,
       tendencia: articulo.tendencia ?? "neutral",
+      id_paquete:
+        articulo.id_paquete && articulo.id_paquete?.trim().length > 0
+          ? articulo.id_paquete
+          : null,
     },
   });
 
@@ -173,28 +201,135 @@ export async function actualizarArticulo(
   return { success: true, error: null };
 }
 
+// ===== PAQUETES DE ARTICULOS =====
+// ===== OBTENER TODOS LOS PAQUETES DE ARTICULOS =====
 export async function obtenerPaquetesArticulos(): Promise<
-  {
-    id: string;
-    titulo: string;
-    estrellas: number;
-    categoria: string;
-    mercado: string;
-    precio: Decimal;
-    fecha_creacion: Date;
-  }[]
+  ListaPaquetesArticulosProps[]
 > {
-  const paquetes = await prisma.paquete_articulos.findMany({
-    select: {
-      categoria: true,
-      id: true,
-      estrellas: true,
-      fecha_creacion: true,
-      mercado: true,
-      titulo: true,
-      precio: true,
+  const paquetes = await prisma.paquete_articulos
+    .findMany({
+      select: {
+        categoria: true,
+        id: true,
+        estrellas: true,
+        fecha_creacion: true,
+        mercado: true,
+        titulo: true,
+        precio: true,
+        disponibilidad: true,
+      },
+    })
+    .then((resultado) =>
+      resultado.map((paquete) => ({
+        id: paquete.id,
+        categoria: paquete.categoria,
+        estrellas: paquete.estrellas.length,
+        fecha_creacion: paquete.fecha_creacion,
+        mercado: paquete.mercado,
+        titulo: paquete.titulo,
+        precio: Number(paquete.precio),
+        disponibilidad: paquete.disponibilidad,
+      }))
+    );
+
+  return paquetes;
+}
+
+// ===== OBTENER CREAR UN PAQUETE DE ARTICULOS =====
+export async function crearPaqueteArticulos(
+  paquete: DatosCreacionPaqueteArticulos,
+  creador: string
+) {
+  const creacion = await prisma.paquete_articulos.create({
+    data: {
+      ...paquete,
+      id_creador: creador,
     },
   });
 
-  return paquetes;
+  if (!creacion) return { error: "Problema creando paquete", succes: false };
+  return { success: true, error: null };
+}
+
+// ===== OBTENER UN PAQUETE DE ARTICULOS UNICO =====
+
+export async function obtenerPaqueteArticulo(id: string) {
+  const paquete = await prisma.paquete_articulos
+    .findUnique({
+      select: {
+        categoria: true,
+        id: true,
+        fecha_creacion: true,
+        mercado: true,
+        titulo: true,
+        precio: true,
+        disponibilidad: true,
+        descripcion: true,
+        resumen: true,
+      },
+      where: {
+        id: id,
+      },
+    })
+    .then((paquete_resultado) =>
+      paquete_resultado
+        ? {
+            ...paquete_resultado,
+            resumen: paquete_resultado.resumen ?? "",
+            precio: Number(paquete_resultado.precio),
+          }
+        : null
+    )
+    .catch(() => null);
+
+  return paquete;
+}
+
+// ==== ACTUALIZAR DATOS DE UN PAQUETE DE ARTICULOS =====
+
+export async function actualizarPaqueteArticulos(
+  paquete: DatosActualizacionPaqueteArticulos
+) {
+  const actualizacionArticulo = await prisma.paquete_articulos.update({
+    where: {
+      id: paquete.id,
+    },
+    data: {
+      categoria: paquete.categoria,
+      mercado: paquete.mercado,
+      resumen: paquete.resumen,
+      titulo: paquete.titulo,
+      descripcion: paquete.descripcion,
+      precio: paquete.precio,
+    },
+  });
+
+  if (!actualizacionArticulo)
+    return { error: "Problema actualizando articulo", success: false };
+
+  return { success: true, error: null };
+}
+
+// ==== ELIMINAR UN PAQUETE DE ARTICULOS =====
+export async function eliminarPaqueteArticulo(id: string) {
+  try {
+    await prisma.articulo.updateMany({
+      where: {
+        id_paquete: id,
+      },
+      data: {
+        id_paquete: null,
+      },
+    });
+
+    await prisma.paquete_articulos.delete({
+      where: {
+        id: id,
+      },
+    });
+    return { success: true, error: null };
+  } catch (error) {
+    console.log(error);
+    return { error: "Problema eliminando paquete", success: false };
+  }
 }

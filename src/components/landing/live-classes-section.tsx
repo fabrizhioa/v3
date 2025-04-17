@@ -6,44 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, Clock, Users } from "lucide-react";
 import Link from "next/link";
+import { DatosEnvivosLandingProps } from "@/types/landing";
 
-export default function LiveClassesSection() {
-  const upcomingClasses = [
-    {
-      id: 1,
-      title: "Análisis de Mercado Semanal",
-      instructor: "Carlos Martínez",
-      date: "Lunes, 18 de Marzo",
-      time: "19:00 - 20:30",
-      attendees: 156,
-      image: "/placeholder.svg?height=400&width=600",
-      status: "Próximamente",
-    },
-    {
-      id: 2,
-      title: "Estrategias de Scalping en Forex",
-      instructor: "Ana Rodríguez",
-      date: "Miércoles, 20 de Marzo",
-      time: "18:00 - 19:30",
-      attendees: 98,
-      image: "/placeholder.svg?height=400&width=600",
-      status: "Próximamente",
-    },
-    {
-      id: 3,
-      title: "Psicología del Trading",
-      instructor: "Miguel López",
-      date: "Viernes, 22 de Marzo",
-      time: "17:00 - 18:30",
-      attendees: 124,
-      image: "/placeholder.svg?height=400&width=600",
-      status: "Próximamente",
-    },
-  ];
-
+export default function LiveClassesSection({
+  envivos,
+}: {
+  envivos: DatosEnvivosLandingProps[];
+}) {
   return (
     <section className="py-20 bg-muted/30">
       <div className="container">
@@ -58,30 +29,36 @@ export default function LiveClassesSection() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {upcomingClasses.map((liveClass) => (
+          {envivos.map((liveClass) => (
             <Card
               key={liveClass.id}
               className="overflow-hidden border hover:shadow-md transition-shadow"
             >
               <CardHeader>
-                <Badge className="w-max">{liveClass.status}</Badge>
-                <CardTitle>{liveClass.title}</CardTitle>
+                {/* <Badge className="w-max">{liveClass.status}</Badge> */}
+                <CardTitle>{liveClass.titulo}</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Por {liveClass.instructor}
+                  Por {liveClass.creador.nombre_completo}
                 </p>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex items-center text-sm">
                   <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{liveClass.date}</span>
+                  <span>{liveClass.fecha.toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{liveClass.time}</span>
+                  <span>
+                    {`${liveClass.tiempo_inicial
+                      .getTime()
+                      .toLocaleString()} - ${liveClass.tiempo_final
+                      .getTime()
+                      .toLocaleString()}`}
+                  </span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{liveClass.attendees} asistentes registrados</span>
+                  <span>{liveClass.ventas} asistentes registrados</span>
                 </div>
               </CardContent>
               <CardFooter>

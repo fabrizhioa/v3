@@ -17,18 +17,12 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { Articulo } from "@/types/articulos";
-
-interface NewsProps extends Articulo {
-  autor: {
-    nombre_completo: string;
-  };
-}
+import { DatosArticulosLandingProps } from "@/types/landing";
 
 export default function NewsPreviewSection({
   articulos,
 }: {
-  articulos: NewsProps[];
+  articulos: DatosArticulosLandingProps[];
 }) {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -36,7 +30,7 @@ export default function NewsPreviewSection({
       month: "long",
       day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString("es-ES", options);
+    return new Date(dateString).toLocaleDateString("es-MX", options);
   };
 
   const getTendenciaIcon = (tendencia?: string) => {
@@ -90,7 +84,7 @@ export default function NewsPreviewSection({
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <User className="h-4 w-4 mr-1" />
-                  <span>{novedad.autor.nombre_completo}</span>
+                  <span>{novedad.creador.nombre_completo}</span>
                 </div>
                 {novedad.tendencia && (
                   <div className="flex items-center text-sm">
@@ -115,7 +109,7 @@ export default function NewsPreviewSection({
               </CardContent>
               <CardFooter className="flex justify-between">
                 <div className="flex items-center text-sm text-muted-foreground">
-                  <Star className="h-4 w-4 mr-1" />
+                  <Star className="h-4 w-4 mr-1 bg-custom-yellow" />
                   <span>{novedad.estrellas} estrellas</span>
                 </div>
                 <Button size="sm">

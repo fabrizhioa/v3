@@ -4,6 +4,7 @@ import {
   NewspaperIcon,
   SettingsIcon,
   ShoppingCartIcon,
+  UserIcon,
 } from "lucide-react";
 
 interface NavLinkProps {
@@ -19,6 +20,7 @@ interface NavLinkProps {
 }
 
 export const NAV_LINKS: NavLinkProps[] = [
+  { title: "Usuarios", link: "/app/usuarios", icon: UserIcon },
   { title: "Articulos", link: "/app", icon: NewspaperIcon, end: true },
   { title: "Tablero", link: "/app/tablero", icon: LayoutDashboardIcon },
   { title: "Catagalo", link: "/app/catalogo", icon: ShoppingCartIcon },
